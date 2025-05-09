@@ -5,84 +5,211 @@ using UnityEngine.UI;
 
 public class LineRender : MonoBehaviour
 {
-    GameObject rootCanvas;
-    GameObject content;
+    public GameObject rootCanvas;
+    public GameObject content;
     GameObject verticalLinePrefab;
-    GameObject horizontalLinePrefab;
+    public GameObject scrollView;
+    public RectTransform contentRect;
+    RectTransform scrollViewRect;
 
+    GameObject wholeHorizontalLinePrefab;
+    GameObject halfHorizontalLinePrefab;
+    GameObject quaterHorizontalLinePrefab;
+    GameObject eighthHorizontalLinePrefab;
+    GameObject sixteenthHorizontalLinePrefab;
+
+    float contentHeight;
     float beatHeight;
 
-    void Start()
-    {
-        rootCanvas = GameObject.Find("RootCanvas");
-        content = GameObject.Find("Content");
-        verticalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/VerticalLine");
-        horizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLine");
+    int horizontalLineCount;
 
+    public List<GameObject> verticalLines;
+    public List<GameObject> horizontalLines;
+
+    public List<float> verticalXs;
+    public List<float> horizontalYs;
+
+    public void Init()
+    {
+        rootCanvas = GameObject.Find("RootCanvas"); // 캔버스
+        content = GameObject.Find("Content"); // 스크롤 안의 내용물
+        verticalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/VerticalLine"); // 수직선
+        scrollView = GameObject.Find("ScrollView"); // 스크롤 오브젝트
+        contentRect = content.GetComponent<RectTransform>(); // 내용물 transform
+        scrollViewRect = scrollView.GetComponent<RectTransform>(); // 스크롤 transform
+
+        wholeHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineWhole"); // 1박 수평선
+        halfHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineHalf"); // 1/2박 수평선
+        quaterHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineQuater"); // 1/4박 수평선
+        eighthHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineEighth"); // 1/8박 수평선
+        sixteenthHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineSixteenth"); // 1/16박 수평선
+
+        verticalLines = new();
+        horizontalLines = new();
+        verticalXs = new();
+        horizontalYs = new();
+
+        // 스크롤 영역 조정
+        contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, 5000);
+
+        contentHeight = contentRect.sizeDelta.y; // 내용물 수직 크기
         beatHeight = (rootCanvas.GetComponent<RectTransform>().rect.height) / 4;
+
 
         int numLines = 8;
         float totalWidth = (rootCanvas.GetComponent<RectTransform>().rect.width) * 0.92f;
 
+        TimeController.Timer.ExecuteAfterTime(0.01f, () => scrollView.GetComponent<ScrollRect>().verticalNormalizedPosition = 0);
+
+        // 수직선 제작
         for (int i = 0; i < numLines; i++)
         {
             float x = -(totalWidth / 2f) + (totalWidth / (numLines - 1)) * i;
             GameObject vLine = Instantiate(verticalLinePrefab, content.transform);
             RectTransform vrt = vLine.GetComponent<RectTransform>();
-            vrt.anchoredPosition = new Vector2(x, 0);
+
+            // 아래에서 시작해서 위로 그리도록 설정
+            vrt.pivot = new Vector2(0.5f, 0f);               // 아래 기준
+            vrt.anchorMin = new Vector2(0.5f, 0f);           // Content 아래
+            vrt.anchorMax = new Vector2(0.5f, 0f);
+
+            vrt.anchoredPosition = new Vector2(x, 0);        // Content의 아래쪽에 위치
+            vrt.sizeDelta = new Vector2(vrt.sizeDelta.x, 6000f); // 위로 뻗는 높이
+
+            verticalLines.Add(vLine);
         }
 
-        // 수평선 배치
-        for (int i = 0; i <= 4; i++)
+        //수평선 제작(1박)
+        for (int i = 0; i <= 60; i++)
         {
-            // 1박 단위 (두껍고 진하게)
-            CreateHorizontalLine(-i * beatHeight, thickness: 2f, color: new Color(0.6f, 0.6f, 0.6f, 1f));
+            float y = i * 400f;
 
-            if (i < 4)
+            GameObject hLine = Instantiate(wholeHorizontalLinePrefab, content.transform);
+            RectTransform hrt = hLine.GetComponent<RectTransform>();
+
+            // pivot과 anchor를 아래 기준으로 설정
+            hrt.pivot = new Vector2(0f, 0f);
+            hrt.anchorMin = new Vector2(0f, 0f);
+            hrt.anchorMax = new Vector2(1f, 0f); // 가로로 Stretch 되도록
+
+            hrt.anchoredPosition = new Vector2(0f, y); // 아래에서 위로 배치
+            hrt.sizeDelta = new Vector2(0f, 12f); // 높이 1px, 너비는 anchor로 결정됨
+
+            horizontalLines.Add(hLine);
+        }
+
+        //수평선 제작(1/2박)
+        for (int i = 0; i <= 120; i++)
+        {
+            float y = i * 200f;
+
+            if (i % 2 != 0)
             {
-                // 1/2박 단위 (중간 두께+반투명)
-                CreateHorizontalLine(-(i * beatHeight + beatHeight / 2f),
-                                     thickness: 1f,
-                                     color: new Color(0.7f, 0.7f, 0.7f, 0.7f));
 
-                // 1/4박 단위 (얇고 연한)
-                for (int k = 1; k < 4; k++)
-                    CreateHorizontalLine(-(i * beatHeight + k * beatHeight / 4f),
-                                         thickness: 0.5f,
-                                         color: new Color(0.8f, 0.8f, 0.8f, 0.5f));
+                GameObject hLine = Instantiate(halfHorizontalLinePrefab, content.transform);
+                RectTransform hrt = hLine.GetComponent<RectTransform>();
 
-                // 1/8박 단위
-                for (int k = 1; k < 8; k++)
-                    CreateHorizontalLine(-(i * beatHeight + k * beatHeight / 8f),
-                                         thickness: 0.5f,
-                                         color: new Color(0.85f, 0.85f, 0.85f, 0.4f));
+                // pivot과 anchor를 아래 기준으로 설정
+                hrt.pivot = new Vector2(0f, 0f);
+                hrt.anchorMin = new Vector2(0f, 0f);
+                hrt.anchorMax = new Vector2(1f, 0f); // 가로로 Stretch 되도록
 
-                // 1/16박 단위
-                for (int k = 1; k < 16; k++)
-                    CreateHorizontalLine(-(i * beatHeight + k * beatHeight / 16f),
-                                         thickness: 0.5f,
-                                         color: new Color(0.9f, 0.9f, 0.9f, 0.3f));
+                hrt.anchoredPosition = new Vector2(0f, y); // 아래에서 위로 배치
+                hrt.sizeDelta = new Vector2(0f, 8f); // 높이 1px, 너비는 anchor로 결정됨
+
+                horizontalLines.Add(hLine);
             }
         }
+
+        //수평선 제작(1/4박)
+        for (int i = 0; i <= 240; i++)
+        {
+            float y = i * 100f;
+
+            if (i % 2 != 0)
+            {
+
+                GameObject hLine = Instantiate(quaterHorizontalLinePrefab, content.transform);
+                RectTransform hrt = hLine.GetComponent<RectTransform>();
+
+                // pivot과 anchor를 아래 기준으로 설정
+                hrt.pivot = new Vector2(0f, 0f);
+                hrt.anchorMin = new Vector2(0f, 0f);
+                hrt.anchorMax = new Vector2(1f, 0f); // 가로로 Stretch 되도록
+
+                hrt.anchoredPosition = new Vector2(0f, y); // 아래에서 위로 배치
+                hrt.sizeDelta = new Vector2(0f, 6f);
+
+                horizontalLines.Add(hLine);
+            }
+        }
+
+        //수평선 제작(1/8박)
+        for (int i = 0; i <= 480; i++)
+        {
+            float y = i * 50f;
+
+            if (i % 2 != 0)
+            {
+
+                GameObject hLine = Instantiate(eighthHorizontalLinePrefab, content.transform);
+                RectTransform hrt = hLine.GetComponent<RectTransform>();
+
+                // pivot과 anchor를 아래 기준으로 설정
+                hrt.pivot = new Vector2(0f, 0f);
+                hrt.anchorMin = new Vector2(0f, 0f);
+                hrt.anchorMax = new Vector2(1f, 0f); // 가로로 Stretch 되도록
+
+                hrt.anchoredPosition = new Vector2(0f, y); // 아래에서 위로 배치
+                hrt.sizeDelta = new Vector2(0f, 4f);
+
+                horizontalLines.Add(hLine);
+            }
+        }
+
+        //수평선 제작(1/16박)
+        for (int i = 0; i <= 960; i++)
+        {
+            float y = i * 25f;
+
+            if (i % 2 != 0)
+            {
+
+                GameObject hLine = Instantiate(sixteenthHorizontalLinePrefab, content.transform);
+                RectTransform hrt = hLine.GetComponent<RectTransform>();
+
+                // pivot과 anchor를 아래 기준으로 설정
+                hrt.pivot = new Vector2(0f, 0f);
+                hrt.anchorMin = new Vector2(0f, 0f);
+                hrt.anchorMax = new Vector2(1f, 0f); // 가로로 Stretch 되도록
+
+                hrt.anchoredPosition = new Vector2(0f, y); // 아래에서 위로 배치
+                hrt.sizeDelta = new Vector2(0f, 2f);
+
+                horizontalLines.Add(hLine);
+            }
+        }
+
+        //수평선과 수직선들의 좌표를 담는 리스트
+        foreach (var vLine in verticalLines)
+            verticalXs.Add(vLine.GetComponent<RectTransform>().anchoredPosition.x);
+        foreach (var hLine in horizontalLines)
+            horizontalYs.Add(hLine.GetComponent<RectTransform>().anchoredPosition.y);
+
+        verticalXs.Sort();
+        horizontalYs.Sort();
     }
 
-    void CreateHorizontalLine(float y, float thickness, Color color)
+    void Start()
     {
-        GameObject hLine = Instantiate(horizontalLinePrefab, content.transform);
-        RectTransform hrt = hLine.GetComponent<RectTransform>();
-
-        // 위치 설정
-        hrt.anchoredPosition = new Vector2(0, y);
-        // 두께 설정
-        hrt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, thickness);
-        // 색상 설정
-        var img = hLine.GetComponent<Image>();
-        if (img != null) img.color = color;
+        Init();
     }
+
+
 
 
     void Update()
     {
-        
+
     }
 }
