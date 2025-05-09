@@ -7,6 +7,7 @@ using UnityEngine;
 public class NoteData
 {
     public float time;
+    public int duration;
     public int startLine;
     public int endLine;
     public Define.NoteType noteType;
