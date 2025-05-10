@@ -58,8 +58,11 @@ public class NoteEditor : MonoBehaviour
 
     }
 
-    public void AddNormalNote()
+    public (int, int, float, float, float) GetMousePointer()
     {
+        float centerX = -1f, centerY = -1f;
+
+        // 마우스 좌표 반환
         Vector2 localMousePos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(viewportRect, Input.mousePosition, null, out localMousePos);
         Vector2 anchoredMousePos = localMousePos + lineRender.contentRect.anchoredPosition;
@@ -76,16 +79,62 @@ public class NoteEditor : MonoBehaviour
         int vIndex = -1;
         int hIndex = Mathf.FloorToInt(y / 25);
 
+        centerY = hIndex * 25 + 25 / 2f;
+
         for (int i = 0; i < lineRender.verticalXs.Count - 1; i++)
         {
             if (x >= lineRender.verticalXs[i] && x < lineRender.verticalXs[i + 1])
             {
+                centerX = (lineRender.verticalXs[i] + lineRender.verticalXs[i + 1]) / 2f;
                 vIndex = i;
                 break;
             }
         }
-        Debug.Log($"수직선 : {vIndex}, 수평선 : {hIndex}");
+        //Debug.Log($"수직선 : {vIndex}, 수평선 : {hIndex}");
+        //Debug.Log($"centerX : {centerX}, centerY : {centerY}");
 
+        float noteWidth = (lineRender.verticalXs[1] - lineRender.verticalXs[0]);
+
+        if (vIndex == -1f || hIndex == -1f || centerX == -1f || centerY == -1f)
+        {
+            return (-1, -1, -1f, -1f, -1f);
+        }
+
+        return (vIndex, hIndex, centerX, centerY, noteWidth);
+    }
+
+    public void AddNormalNote()
+    {
+        (int vIndex, int hIndex, float centerX, float centerY, float noteWidth) = GetMousePointer();
+        if (vIndex == -1) return;
+
+        if (!Managers.Chart.NormalNotes[vIndex].Contains(hIndex))
+        {
+            GameObject NotePrefab = Resources.Load<GameObject>("Prefabs/Notes/NormalNote");
+            GameObject noteInstance = GameObject.Instantiate(NotePrefab, contentRect);
+
+            RectTransform rt = noteInstance.GetComponent<RectTransform>();
+            rt.pivot = new Vector2(0.5f, 0.5f); // 필요 시 조정
+            rt.anchorMin = new Vector2(0.5f, 0f);
+            rt.anchorMax = new Vector2(0.5f, 0f);
+            rt.anchoredPosition = new Vector2(centerX, centerY);
+            rt.sizeDelta = new Vector2(noteWidth + 1, 25f);
+
+            Managers.Chart.NormalNotes[vIndex].Add(hIndex);
+            Managers.Chart.Notes[vIndex].Add(hIndex, noteInstance);
+        }
+        else
+        {
+            if (Managers.Chart.Notes[vIndex].TryGetValue(hIndex, out GameObject go))
+            {
+                GameObject.Destroy(go);
+                Managers.Chart.Notes[vIndex].Remove(hIndex);
+            }
+
+            Managers.Chart.NormalNotes[vIndex].Remove(hIndex);
+        }
+
+        
 
     }
 
@@ -117,6 +166,9 @@ public class NoteEditor : MonoBehaviour
     {
 
     }
+
+    
+
     public void OnDestroy()
     {
         // 객체가 파괴될 때도 구독 해제

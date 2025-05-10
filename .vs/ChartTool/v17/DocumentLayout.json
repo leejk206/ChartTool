@@ -1,0 +1,150 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|c:\\users\\ljk91\\onedrive\\\uBB38\uC11C\\github\\charttool\\assets\\scripts\\managers\\playmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\managers\\playmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|c:\\users\\ljk91\\onedrive\\\uBB38\uC11C\\github\\charttool\\assets\\scripts\\playmode\\playcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playmode\\playcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\assets\\scripts\\managers\\chartmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\managers\\chartmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\assets\\scripts\\editmode\\noteeditor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\editmode\\noteeditor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\assets\\scripts\\managers\\managers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\managers\\managers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\assets\\scripts\\controller\\notecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\controller\\notecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\assets\\scripts\\data\\initfunc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\data\\initfunc.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\assets\\scripts\\editmode\\linerender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF12B105-26B6-F73C-5D8A-E0E725E56853}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\editmode\\linerender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "PlayController.cs",
+              "DocumentMoniker": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\PlayMode\\PlayController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\PlayMode\\PlayController.cs",
+              "ToolTip": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\PlayMode\\PlayController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\PlayMode\\PlayController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAALAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-10T09:03:47.523Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "PlayManager.cs",
+              "DocumentMoniker": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\Managers\\PlayManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Managers\\PlayManager.cs",
+              "ToolTip": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\Managers\\PlayManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Managers\\PlayManager.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAuwDQAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-10T08:44:43.731Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "InitFunc.cs",
+              "DocumentMoniker": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\Data\\InitFunc.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Data\\InitFunc.cs",
+              "ToolTip": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\Data\\InitFunc.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Data\\InitFunc.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwCMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-10T06:25:34.194Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "NoteController.cs",
+              "DocumentMoniker": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\Controller\\NoteController.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Controller\\NoteController.cs",
+              "ToolTip": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\Controller\\NoteController.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Controller\\NoteController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-10T05:57:23.496Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Managers.cs",
+              "DocumentMoniker": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\Managers\\Managers.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Managers\\Managers.cs",
+              "ToolTip": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\Managers\\Managers.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Managers\\Managers.cs",
+              "ViewState": "AgIAAGEAAAAAAAAAAAArwHoAAABMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-10T05:33:55.942Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ChartManager.cs",
+              "DocumentMoniker": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\Managers\\ChartManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Managers\\ChartManager.cs",
+              "ToolTip": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\Managers\\ChartManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Managers\\ChartManager.cs",
+              "ViewState": "AgIAAGMAAAAAAAAAAAAYwHEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-10T05:32:02.145Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "NoteEditor.cs",
+              "DocumentMoniker": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\EditMode\\NoteEditor.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\EditMode\\NoteEditor.cs",
+              "ToolTip": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\EditMode\\NoteEditor.cs",
+              "RelativeToolTip": "Assets\\Scripts\\EditMode\\NoteEditor.cs",
+              "ViewState": "AgIAAG8AAAAAAAAAAAAhwGUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-10T05:05:18.724Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LineRender.cs",
+              "DocumentMoniker": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\EditMode\\LineRender.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\EditMode\\LineRender.cs",
+              "ToolTip": "C:\\Users\\ljk91\\OneDrive\\\uBB38\uC11C\\GitHub\\ChartTool\\Assets\\Scripts\\EditMode\\LineRender.cs",
+              "RelativeToolTip": "Assets\\Scripts\\EditMode\\LineRender.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAxwDMAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-10T04:42:26.946Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -11,13 +11,16 @@ public class InitFunc
     {
         lineRender = GameObject.Find("LineRender").GetComponent<LineRender>();
         noteEditor = GameObject.Find("NoteEditor").GetComponent<NoteEditor>();
+        Managers.Chart.Init();
         lineRender.Init();
         noteEditor.Init();
     }
 
     public void PlayModeInit()
     {
-
+        Managers.Chart.Init();
+        lineRender.Init();
+        noteEditor.Init();
     }
 
     void Start()

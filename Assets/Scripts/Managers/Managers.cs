@@ -12,7 +12,7 @@ public class Managers : MonoBehaviour
 
     ChartManager _chart = new ChartManager();
     InputManager _input = new InputManager();
-    public static ChartManager Card { get { return Instance._chart; } }
+    public static ChartManager Chart { get { return Instance._chart; } }
     public static InputManager Input { get { return Instance._input; } }
 
 
@@ -74,12 +74,12 @@ public class Managers : MonoBehaviour
             // 한 프레임 대기 후 초기화 (오브젝트 완전히 로드된 뒤)
             if (!gameObject.activeSelf)
                 gameObject.SetActive(true);
-            StartCoroutine(DeferredInit());
+            StartCoroutine(DeferredEditModeInit());
         }
     }
 
     // 초기화 코루틴 – 한 프레임 기다려야 오브젝트가 확실히 살아 있음
-    private IEnumerator DeferredInit()
+    private IEnumerator DeferredEditModeInit()
     {
         yield return null;
 
@@ -99,37 +99,28 @@ public class Managers : MonoBehaviour
         {
             SceneManager.sceneLoaded -= OnPlayModeLoaded;
 
-            InitFunc init = new();
-            init.PlayModeInit();
+            if (!gameObject.activeSelf)
+                gameObject.SetActive(true);
+            StartCoroutine(DeferredPlayModeInit());
         }
+    }
+
+    private IEnumerator DeferredPlayModeInit()
+    {
+        yield return null;
+
+        InitFunc init = new();
+        init.PlayModeInit();
     }
 
     public void LoadChart()
     {
-        string path = Path.Combine(Application.persistentDataPath, fileName);
-        if (!File.Exists(path))
-        {
-            Debug.Log($"파일이 없으므로 새 차트 파일을 생성합니다: {path}");
-
-            // 빈 차트 생성
-            currentChart = new ChartData
-            {
-                bpm = 120f, // 기본 BPM (원하면 변경 가능)
-                notes = new System.Collections.Generic.List<NoteData>()
-            };
-
-            // 파일로 저장
-            ChartLoader.Save(currentChart, fileName);
-        }
-        else
-        {
-            currentChart = ChartLoader.Load(fileName);
-        }
+        Chart.LoadChartFromJson(Path.Combine(Application.persistentDataPath, "chart.json"));
     }
 
     public void SaveChart()
     {
-        ChartLoader.Save(currentChart, "MyChart.json");
+        Chart.SaveChartToJson(Path.Combine(Application.persistentDataPath, "chart.json"));
     }
     #endregion
 
