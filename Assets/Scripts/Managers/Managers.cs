@@ -12,9 +12,9 @@ public class Managers : MonoBehaviour
 
     ChartManager _chart = new ChartManager();
     InputManager _input = new InputManager();
+
     public static ChartManager Chart { get { return Instance._chart; } }
     public static InputManager Input { get { return Instance._input; } }
-
 
     private ChartData currentChart;
     public string fileName = "MyChart.json";
@@ -116,6 +116,8 @@ public class Managers : MonoBehaviour
     public void LoadChart()
     {
         Chart.LoadChartFromJson(Path.Combine(Application.persistentDataPath, "chart.json"));
+        Chart.RenderNotesFromData();
+        
     }
 
     public void SaveChart()

@@ -97,7 +97,6 @@ public class ChartManager
         SlideNotes = wrapper.SlideNotes ?? CreateEmptyNoteList();
         FlickNotes = wrapper.FlickNotes ?? CreateEmptyNoteList();
 
-        RenderNotesFromData();
 
         Debug.Log("불러오기 완료");
     }
@@ -143,6 +142,54 @@ public class ChartManager
         }
 
         Debug.Log("노트 렌더링 완료");
+    }
+
+    public void PlayModeRenderNotesFromData(float beatHeight = 25f)
+    {
+        // 1) 기존 씬의 Note 오브젝트만 제거
+        ClearAllNotesFromScene();
+
+        // 2) Canvas 영역 기준으로 계산
+        RectTransform canvasRect = GameObject.Find("RootCanvas")
+                                            .GetComponent<RectTransform>();
+
+        int numLines = Managers.Chart.NormalNotes.Count; // 보통 7
+        float totalW = canvasRect.rect.width;
+        float startX = -totalW / 2f;
+        float cellWidth = totalW / (numLines - 1) * 0.75f;
+        float screenH = canvasRect.rect.height;
+
+        // 3) 노트 스폰 & NoteMover 부착
+        float speedY = screenH * (GameObject.Find("PlayController").GetComponent<PlayController>().BPM / 60f);
+
+        for (int v = 0; v < numLines; v++)
+        {
+            float centerX = startX + cellWidth * v + cellWidth;
+            foreach (int h in Managers.Chart.NormalNotes[v])
+            {
+                float centerY = h * beatHeight + (beatHeight / 2f);
+
+                GameObject prefab = Resources.Load<GameObject>("Prefabs/Notes/NormalNote");
+                GameObject noteGO = GameObject.Instantiate(prefab, canvasRect);
+
+                // RectTransform 세팅
+                var rt = noteGO.GetComponent<RectTransform>();
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.anchorMin = new Vector2(0.5f, 0f);
+                rt.anchorMax = new Vector2(0.5f, 0f);
+                rt.anchoredPosition = new Vector2(centerX, centerY);
+                rt.sizeDelta = new Vector2(cellWidth, beatHeight);
+
+                // NoteMover 컴포넌트 부착 (업데이트에서 Y축 이동)
+                var mover = noteGO.AddComponent<NoteMover>();
+                mover.speed = speedY;
+
+                // 딕셔너리에 저장
+                Managers.Chart.Notes[v].Add(h, noteGO);
+            }
+        }
+
+        Debug.Log("Play 모드용 노트 렌더 완료");
     }
 
     public void ClearAllNotesFromScene()

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LineRender : MonoBehaviour
@@ -29,6 +30,8 @@ public class LineRender : MonoBehaviour
     public List<float> verticalXs;
     public List<float> horizontalYs;
 
+    bool isPlayMode = false;
+
     public void Init()
     {
         rootCanvas = GameObject.Find("RootCanvas"); // 캔버스
@@ -50,7 +53,7 @@ public class LineRender : MonoBehaviour
         horizontalYs = new();
 
         // 스크롤 영역 조정
-        contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, 5000);
+        contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, 50000);
 
         contentHeight = contentRect.sizeDelta.y; // 내용물 수직 크기
         beatHeight = (rootCanvas.GetComponent<RectTransform>().rect.height) / 4;
@@ -60,6 +63,9 @@ public class LineRender : MonoBehaviour
         float totalWidth = (rootCanvas.GetComponent<RectTransform>().rect.width) * 0.92f;
 
         TimeController.Timer.ExecuteAfterTime(0.01f, () => scrollView.GetComponent<ScrollRect>().verticalNormalizedPosition = 0);
+
+        if (SceneManager.GetActiveScene().name == "PlayMode")
+            isPlayMode = true;
 
         // 수직선 제작
         for (int i = 0; i < numLines; i++)
@@ -74,13 +80,24 @@ public class LineRender : MonoBehaviour
             vrt.anchorMax = new Vector2(0.5f, 0f);
 
             vrt.anchoredPosition = new Vector2(x, 0);        // Content의 아래쪽에 위치
-            vrt.sizeDelta = new Vector2(vrt.sizeDelta.x, 6000f); // 위로 뻗는 높이
+            vrt.sizeDelta = new Vector2(vrt.sizeDelta.x, 50000f); // 위로 뻗는 높이
+
+            if (isPlayMode)
+            {
+                Image img = vLine.GetComponent<Image>();
+                if (img != null)
+                {
+                    Color color = img.color;
+                    color.a = 0f; // 완전 투명
+                    img.color = color;
+                }
+            }
 
             verticalLines.Add(vLine);
         }
 
         //수평선 제작(1박)
-        for (int i = 0; i <= 60; i++)
+        for (int i = 0; i <= 125; i++)
         {
             float y = i * 400f;
 
@@ -95,11 +112,22 @@ public class LineRender : MonoBehaviour
             hrt.anchoredPosition = new Vector2(0f, y); // 아래에서 위로 배치
             hrt.sizeDelta = new Vector2(0f, 12f); // 높이 1px, 너비는 anchor로 결정됨
 
+            if (isPlayMode)
+            {
+                Image img = hLine.GetComponent<Image>();
+                if (img != null)
+                {
+                    Color color = img.color;
+                    color.a = 0f; // 완전 투명
+                    img.color = color;
+                }
+            }
+
             horizontalLines.Add(hLine);
         }
 
         //수평선 제작(1/2박)
-        for (int i = 0; i <= 120; i++)
+        for (int i = 0; i <= 250; i++)
         {
             float y = i * 200f;
 
@@ -117,12 +145,23 @@ public class LineRender : MonoBehaviour
                 hrt.anchoredPosition = new Vector2(0f, y); // 아래에서 위로 배치
                 hrt.sizeDelta = new Vector2(0f, 8f); // 높이 1px, 너비는 anchor로 결정됨
 
+                if (isPlayMode)
+                {
+                    Image img = hLine.GetComponent<Image>();
+                    if (img != null)
+                    {
+                        Color color = img.color;
+                        color.a = 0f; // 완전 투명
+                        img.color = color;
+                    }
+                }
+
                 horizontalLines.Add(hLine);
             }
         }
 
         //수평선 제작(1/4박)
-        for (int i = 0; i <= 240; i++)
+        for (int i = 0; i <= 500; i++)
         {
             float y = i * 100f;
 
@@ -140,12 +179,23 @@ public class LineRender : MonoBehaviour
                 hrt.anchoredPosition = new Vector2(0f, y); // 아래에서 위로 배치
                 hrt.sizeDelta = new Vector2(0f, 6f);
 
+                if (isPlayMode)
+                {
+                    Image img = hLine.GetComponent<Image>();
+                    if (img != null)
+                    {
+                        Color color = img.color;
+                        color.a = 0f; // 완전 투명
+                        img.color = color;
+                    }
+                }
+
                 horizontalLines.Add(hLine);
             }
         }
 
         //수평선 제작(1/8박)
-        for (int i = 0; i <= 480; i++)
+        for (int i = 0; i <= 1000; i++)
         {
             float y = i * 50f;
 
@@ -163,12 +213,23 @@ public class LineRender : MonoBehaviour
                 hrt.anchoredPosition = new Vector2(0f, y); // 아래에서 위로 배치
                 hrt.sizeDelta = new Vector2(0f, 4f);
 
+                if (isPlayMode)
+                {
+                    Image img = hLine.GetComponent<Image>();
+                    if (img != null)
+                    {
+                        Color color = img.color;
+                        color.a = 0f; // 완전 투명
+                        img.color = color;
+                    }
+                }
+
                 horizontalLines.Add(hLine);
             }
         }
 
         //수평선 제작(1/16박)
-        for (int i = 0; i <= 960; i++)
+        for (int i = 0; i <= 2000; i++)
         {
             float y = i * 25f;
 
@@ -185,6 +246,17 @@ public class LineRender : MonoBehaviour
 
                 hrt.anchoredPosition = new Vector2(0f, y); // 아래에서 위로 배치
                 hrt.sizeDelta = new Vector2(0f, 2f);
+
+                if (isPlayMode)
+                {
+                    Image img = hLine.GetComponent<Image>();
+                    if (img != null)
+                    {
+                        Color color = img.color;
+                        color.a = 0f; // 완전 투명
+                        img.color = color;
+                    }
+                }
 
                 horizontalLines.Add(hLine);
             }

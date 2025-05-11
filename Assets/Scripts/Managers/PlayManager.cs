@@ -30,22 +30,7 @@ public class PlayManager
 
     public void BeginPlay()
     {
-        // 1) 화면 위에 남은 노트 제거
-        Managers.Chart.ClearAllNotesFromScene();
-
-        // 2) JSON에서 NormalNotes 불러오기
-        string path = Path.Combine(Application.persistentDataPath, jsonFileName);
-        Managers.Chart.LoadChartFromJson(path);
-
-        // 3) Edit 모드에서 쓰던 Render 함수로 씬 위에 노트들 생성
-        Managers.Chart.RenderNotesFromData();
-
-        // 4) Scroll 시작 위치 초기화
-        contentRect.anchoredPosition = Vector2.zero;
-
-        // 5) 시간 기록 후 스크롤 시작
-        startTime = Time.time;
-        isPlaying = true;
+        
     }
 
     // Update is called once per frame
