@@ -4,20 +4,26 @@ using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
 
+/// <summary>
+/// ì±„ë³´ ë°ì´í„°ë¥¼ ê´€ë¦¬í•˜ê³  ë…¸íŠ¸ë¥¼ ë Œë”ë§í•˜ëŠ” ë§¤ë‹ˆì € í´ë˜ìŠ¤
+/// </summary>
 public class ChartManager
 {
-    public List<Dictionary<int, GameObject>> Notes;
-    public List<List<int>> NormalNotes;
-    public List<List<int>> DragNotes;
-    public List<List<int>> SlideNotes;
-    public List<List<int>> FlickNotes;
+    // ë…¸íŠ¸ ê²Œì„ì˜¤ë¸Œì íŠ¸ ì°¸ì¡°ë¥¼ ì €ì¥í•˜ëŠ” ì»¬ë ‰ì…˜
+    public List<Dictionary<int, GameObject>> Notes;        // ì‹¤ì œ ìƒì„±ëœ ë…¸íŠ¸ ê²Œì„ì˜¤ë¸Œì íŠ¸ ì°¸ì¡°
+    public List<List<int>> NormalNotes;                   // ì¼ë°˜ ë…¸íŠ¸ ë°ì´í„°
+    public List<List<int>> DragNotes;                     // ë“œë˜ê·¸ ë…¸íŠ¸ ë°ì´í„°
+    public List<List<int>> SlideNotes;                    // ìŠ¬ë¼ì´ë“œ ë…¸íŠ¸ ë°ì´í„°
+    public List<List<int>> FlickNotes;                    // í”Œë¦­ ë…¸íŠ¸ ë°ì´í„°
 
-
+    /// <summary>
+    /// ë§¤ë‹ˆì € ì´ˆê¸°í™” ë©”ì„œë“œ
+    /// </summary>
     public void Init()
     {
         #region NotesForJSON
+        // ê° ë…¸íŠ¸ íƒ€ì…ë³„ ë°ì´í„° ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™” (7ê°œì˜ ì„¸ë¡œ ë¼ì¸)
         NormalNotes = new List<List<int>>();
-        // °¢ ¿­Àº JSONÀ¸·Î ³Ñ°ÜÁÙ yÁÂÇ¥ µ¥ÀÌÅÍ¸¦ µé°í ÀÖ¾î¾ß ÇÔ.
         for (int i = 0; i < 7; i++) NormalNotes.Add(new List<int>());
 
         DragNotes = new List<List<int>>();
@@ -30,21 +36,19 @@ public class ChartManager
         for (int i = 0; i < 7; i++) FlickNotes.Add(new List<int>());
         #endregion
 
-        // Notes : ³ëÆ® ¿­ ¸®½ºÆ® ¾ÈÀÇ °ÔÀÓ¿ÀºêÁ§Æ®¸¦ °ü¸®ÇÏ´Â ¸®½ºÆ®
+        // ì‹¤ì œ ë…¸íŠ¸ ê²Œì„ì˜¤ë¸Œì íŠ¸ ì°¸ì¡°ë¥¼ ì €ì¥í•  ë”•ì…”ë„ˆë¦¬ ì´ˆê¸°í™”
         Notes = new();
-        // °¢ ¿­Àº yÁÂÇ¥¿Í ±× ÁÂÇ¥ À§ÀÇ °ÔÀÓ¿ÀºêÁ§Æ®¸¦ µé°í ÀÖ¾î¾ß ÇÔ.
         for (int i = 0; i < 7; i++) Notes.Add(new Dictionary<int, GameObject>());
-
-
-
-
     }
 
     public void OnUpdate()
     {
-
+        // ì—…ë°ì´íŠ¸ ë¡œì§ (í˜„ì¬ ë¯¸ì‚¬ìš©)
     }
 
+    /// <summary>
+    /// JSON ì§ë ¬í™”ë¥¼ ìœ„í•œ ë°ì´í„° ë˜í¼ í´ë˜ìŠ¤
+    /// </summary>
     [System.Serializable]
     private class NotesDataWrapper
     {
@@ -54,10 +58,12 @@ public class ChartManager
         public List<List<int>> FlickNotes;
     }
 
-
-
+    /// <summary>
+    /// ì±„ë³´ ë°ì´í„°ë¥¼ JSON íŒŒì¼ë¡œ ì €ì¥
+    /// </summary>
     public void SaveChartToJson(string filePath)
     {
+        // ë°ì´í„° ë˜í¼ ê°ì²´ ìƒì„±
         NotesDataWrapper wrapper = new NotesDataWrapper
         {
             NormalNotes = NormalNotes,
@@ -66,41 +72,46 @@ public class ChartManager
             FlickNotes = FlickNotes
         };
 
-        // Newtonsoft.Json »ç¿ë
+        // JSON í˜•ì‹ìœ¼ë¡œ ì§ë ¬í™”í•˜ì—¬ íŒŒì¼ ì €ì¥
         string json = JsonConvert.SerializeObject(wrapper, Formatting.Indented);
         System.IO.File.WriteAllText(filePath, json);
 
-        Debug.Log("ÀúÀå ¿Ï·á");
-        Debug.Log($"ÀúÀå °æ·Î : {filePath}, ÆÄÀÏ¸í : chart.json");
+        Debug.Log("ì±„ë³´ ì €ì¥ ì™„ë£Œ");
+        Debug.Log($"ì €ì¥ ê²½ë¡œ : {filePath}, íŒŒì¼ëª… : chart.json");
     }
 
+    /// <summary>
+    /// JSON íŒŒì¼ì—ì„œ ì±„ë³´ ë°ì´í„° ë¡œë“œ
+    /// </summary>
     public void LoadChartFromJson(string filePath)
     {
+        // íŒŒì¼ì´ ì—†ëŠ” ê²½ìš° ìƒˆë¡œìš´ íŒŒì¼ ìƒì„±
         if (!System.IO.File.Exists(filePath))
         {
-            Debug.LogWarning("ÆÄÀÏ ¾øÀ½, »õ ÆÄÀÏ »ı¼º: " + filePath);
+            Debug.LogWarning("ì±„ë³´ ë¡œë“œ ì‹¤íŒ¨, ìƒˆë¡œìš´ íŒŒì¼ ìƒì„±: " + filePath);
 
-            // ÃÊ±âÈ­ ÈÄ ÀúÀå
+            // ì´ˆê¸°í™” í›„ ì €ì¥
             Init();
             SaveChartToJson(filePath);
             return;
         }
 
+        // íŒŒì¼ì—ì„œ JSON ë°ì´í„° ì½ê¸°
         string json = System.IO.File.ReadAllText(filePath);
 
-        // Newtonsoft.Json »ç¿ë
+        // JSON ë°ì´í„° ì—­ì§ë ¬í™”
         NotesDataWrapper wrapper = JsonConvert.DeserializeObject<NotesDataWrapper>(json);
 
-        // null Ã¼Å© ¹× ±âº»°ª ´ëÀÔ
+        // null ì²´í¬ í›„ ë°ì´í„° í• ë‹¹
         NormalNotes = wrapper.NormalNotes ?? CreateEmptyNoteList();
         DragNotes = wrapper.DragNotes ?? CreateEmptyNoteList();
         SlideNotes = wrapper.SlideNotes ?? CreateEmptyNoteList();
         FlickNotes = wrapper.FlickNotes ?? CreateEmptyNoteList();
-
-
-        Debug.Log("ºÒ·¯¿À±â ¿Ï·á");
     }
 
+    /// <summary>
+    /// ë¹ˆ ë…¸íŠ¸ ë¦¬ìŠ¤íŠ¸ ìƒì„±
+    /// </summary>
     private List<List<int>> CreateEmptyNoteList()
     {
         var list = new List<List<int>>();
@@ -108,28 +119,39 @@ public class ChartManager
         return list;
     }
 
+    // ë¼ì¸ ë Œë”ëŸ¬ì™€ ì»¨í…ì¸  ì˜ì—­ ì°¸ì¡°
     LineRender lineRender;
     RectTransform contentRect;
 
+    /// <summary>
+    /// ì—ë””íŠ¸ ëª¨ë“œì—ì„œ ë…¸íŠ¸ ë°ì´í„°ë¥¼ ê¸°ë°˜ìœ¼ë¡œ ë…¸íŠ¸ ë Œë”ë§
+    /// </summary>
     public void RenderNotesFromData()
     {
         ClearAllNotesFromScene();
 
+        // í•„ìš”í•œ ì»´í¬ë„ŒíŠ¸ ì°¸ì¡° ê°€ì ¸ì˜¤ê¸°
         lineRender = GameObject.Find("LineRender").GetComponent<LineRender>();
         contentRect = GameObject.Find("Content").GetComponent<RectTransform>();
+
+        // ëª¨ë“  ë…¸íŠ¸ ë°ì´í„°ë¥¼ ìˆœíšŒí•˜ë©° ë…¸íŠ¸ ìƒì„±
         for (int vIndex = 0; vIndex < Managers.Chart.NormalNotes.Count; vIndex++)
         {
             foreach (int hIndex in Managers.Chart.NormalNotes[vIndex])
             {
+                // ë…¸íŠ¸ì˜ X ì¢Œí‘œ ê³„ì‚° (ë‘ ì„¸ë¡œì„  ì‚¬ì´ì˜ ì¤‘ì•™)
                 float centerX = lineRender.verticalXs.Count > vIndex + 1
                     ? (lineRender.verticalXs[vIndex] + lineRender.verticalXs[vIndex + 1]) / 2f
-                    : lineRender.verticalXs[vIndex]; // fallback
+                    : lineRender.verticalXs[vIndex];
 
+                // ë…¸íŠ¸ì˜ Y ì¢Œí‘œ ê³„ì‚°
                 float centerY = hIndex * 25f + 12.5f;
 
+                // ë…¸íŠ¸ í”„ë¦¬íŒ¹ ìƒì„± ë° ì„¤ì •
                 GameObject NotePrefab = Resources.Load<GameObject>("Prefabs/Notes/NormalNote");
                 GameObject noteInstance = GameObject.Instantiate(NotePrefab, contentRect);
 
+                // RectTransform ì„¤ì •
                 RectTransform rt = noteInstance.GetComponent<RectTransform>();
                 rt.pivot = new Vector2(0.5f, 0.5f);
                 rt.anchorMin = new Vector2(0.5f, 0f);
@@ -137,61 +159,64 @@ public class ChartManager
                 rt.anchoredPosition = new Vector2(centerX, centerY);
                 rt.sizeDelta = new Vector2(lineRender.verticalXs[1] - lineRender.verticalXs[0], 25f);
 
+                // ìƒì„±ëœ ë…¸íŠ¸ ì°¸ì¡° ì €ì¥
                 Managers.Chart.Notes[vIndex][hIndex] = noteInstance;
             }
         }
-
-        Debug.Log("³ëÆ® ·»´õ¸µ ¿Ï·á");
     }
 
+    /// <summary>
+    /// í”Œë ˆì´ ëª¨ë“œì—ì„œ ë…¸íŠ¸ ë°ì´í„°ë¥¼ ê¸°ë°˜ìœ¼ë¡œ ë…¸íŠ¸ ë Œë”ë§
+    /// </summary>
     public void PlayModeRenderNotesFromData(float beatHeight = 25f)
     {
-        // 1) ±âÁ¸ ¾ÀÀÇ Note ¿ÀºêÁ§Æ®¸¸ Á¦°Å
+        // 1) ê¸°ì¡´ ë…¸íŠ¸ ëª¨ë‘ ì œê±°
         ClearAllNotesFromScene();
 
-        // 2) Canvas ¿µ¿ª ±âÁØÀ¸·Î °è»ê
-        RectTransform canvasRect = GameObject.Find("RootCanvas")
-                                            .GetComponent<RectTransform>();
+        // 2) ìº”ë²„ìŠ¤ RectTransform ê°€ì ¸ì˜¤ê¸°
+        var canvasRect = GameObject.Find("RootCanvas")
+                                   .GetComponent<RectTransform>();
 
-        int numLines = Managers.Chart.NormalNotes.Count; // º¸Åë 7
+        // 3) ë ˆì´ì•„ì›ƒ ê³„ì‚°
+        int numLines = Managers.Chart.NormalNotes.Count;
         float totalW = canvasRect.rect.width;
         float startX = -totalW / 2f;
         float cellWidth = totalW / (numLines - 1) * 0.75f;
-        float screenH = canvasRect.rect.height;
 
-        // 3) ³ëÆ® ½ºÆù & NoteMover ºÎÂø
-        float speedY = screenH * (GameObject.Find("PlayController").GetComponent<PlayController>().BPM / 60f);
+        // 4) BPM ê¸°ë°˜ ì†ë„ ê³„ì‚°
+        //    beatHeight*16 â†’ 1ë°•(16í‹±)ë‹¹ í”½ì…€
+        //    (BPM/60)    â†’ ì´ˆë‹¹ ë°•ì ìˆ˜
+        var pc = GameObject.Find("PlayController").GetComponent<PlayController>();
+        float speedY = beatHeight * 16f * (pc.BPM / 60f);
 
+        // 5) ë…¸íŠ¸ ìƒì„± ë° ì ˆëŒ€ ì‹œê°„ ê¸°ë°˜ ì´ˆê¸°í™”
         for (int v = 0; v < numLines; v++)
         {
             float centerX = startX + cellWidth * v + cellWidth;
             foreach (int h in Managers.Chart.NormalNotes[v])
             {
                 float centerY = h * beatHeight + (beatHeight / 2f);
-
-                GameObject prefab = Resources.Load<GameObject>("Prefabs/Notes/NormalNote");
-                GameObject noteGO = GameObject.Instantiate(prefab, canvasRect);
-
-                // RectTransform ¼¼ÆÃ
+                var prefab = Resources.Load<GameObject>("Prefabs/Notes/NormalNote");
+                var noteGO = GameObject.Instantiate(prefab, canvasRect);
                 var rt = noteGO.GetComponent<RectTransform>();
                 rt.pivot = new Vector2(0.5f, 0.5f);
                 rt.anchorMin = new Vector2(0.5f, 0f);
                 rt.anchorMax = new Vector2(0.5f, 0f);
-                rt.anchoredPosition = new Vector2(centerX, centerY);
                 rt.sizeDelta = new Vector2(cellWidth, beatHeight);
+                rt.anchoredPosition = new Vector2(centerX, centerY);
 
-                // NoteMover ÄÄÆ÷³ÍÆ® ºÎÂø (¾÷µ¥ÀÌÆ®¿¡¼­ YÃà ÀÌµ¿)
+                // NoteMover.Init(spawnY, speedY) ì— BPM ê¸°ë°˜ speedY ì „ë‹¬
                 var mover = noteGO.AddComponent<NoteMover>();
-                mover.speed = speedY;
+                mover.Init(centerY, speedY);
 
-                // µñ¼Å³Ê¸®¿¡ ÀúÀå
                 Managers.Chart.Notes[v].Add(h, noteGO);
             }
         }
-
-        Debug.Log("Play ¸ğµå¿ë ³ëÆ® ·»´õ ¿Ï·á");
     }
 
+    /// <summary>
+    /// ì”¬ì—ì„œ ëª¨ë“  ë…¸íŠ¸ ì œê±°
+    /// </summary>
     public void ClearAllNotesFromScene()
     {
         foreach (var column in Managers.Chart.Notes)
@@ -200,7 +225,7 @@ public class ChartManager
             {
                 GameObject.Destroy(kvp.Value);
             }
-            column.Clear(); // Dictionary ³»ºÎµµ ÃÊ±âÈ­
+            column.Clear();
         }
     }
 }

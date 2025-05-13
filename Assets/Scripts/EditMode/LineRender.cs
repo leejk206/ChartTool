@@ -19,45 +19,48 @@ public class LineRender : MonoBehaviour
     GameObject eighthHorizontalLinePrefab;
     GameObject sixteenthHorizontalLinePrefab;
 
-    float contentHeight;
-    float beatHeight;
-
     int horizontalLineCount;
 
     public List<GameObject> verticalLines;
     public List<GameObject> horizontalLines;
+
+    public List<GameObject> quaterLines;
+    public List<GameObject> eighthLines;
+    public List<GameObject> sixteenthLines;
 
     public List<float> verticalXs;
     public List<float> horizontalYs;
 
     bool isPlayMode = false;
 
+    PlayController pc;
+
     public void Init()
     {
-        rootCanvas = GameObject.Find("RootCanvas"); // Äµ¹ö½º
-        content = GameObject.Find("Content"); // ½ºÅ©·Ñ ¾ÈÀÇ ³»¿ë¹°
-        verticalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/VerticalLine"); // ¼öÁ÷¼±
-        scrollView = GameObject.Find("ScrollView"); // ½ºÅ©·Ñ ¿ÀºêÁ§Æ®
-        contentRect = content.GetComponent<RectTransform>(); // ³»¿ë¹° transform
-        scrollViewRect = scrollView.GetComponent<RectTransform>(); // ½ºÅ©·Ñ transform
+        rootCanvas = GameObject.Find("RootCanvas"); // ë£¨íŠ¸ìº”ë²„ìŠ¤
+        content = GameObject.Find("Content"); // ì»¨í…ì¸  ì˜¤ë¸Œì íŠ¸
+        verticalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/VerticalLine"); // ì„¸ë¡œì„ 
+        scrollView = GameObject.Find("ScrollView"); // ìŠ¤í¬ë¡¤ë·°
+        contentRect = content.GetComponent<RectTransform>(); // ì»¨í…ì¸  transform
+        scrollViewRect = scrollView.GetComponent<RectTransform>(); // ìŠ¤í¬ë¡¤ë·° transform
 
-        wholeHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineWhole"); // 1¹Ú ¼öÆò¼±
-        halfHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineHalf"); // 1/2¹Ú ¼öÆò¼±
-        quaterHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineQuater"); // 1/4¹Ú ¼öÆò¼±
-        eighthHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineEighth"); // 1/8¹Ú ¼öÆò¼±
-        sixteenthHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineSixteenth"); // 1/16¹Ú ¼öÆò¼±
+        wholeHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineWhole"); // 1ë°•
+        halfHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineHalf"); // 1/2ë°•
+        quaterHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineQuater"); // 1/4ë°•
+        eighthHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineEighth"); // 1/8ë°•
+        sixteenthHorizontalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/HorizontalLineSixteenth"); // 1/16ë°•
 
         verticalLines = new();
         horizontalLines = new();
         verticalXs = new();
         horizontalYs = new();
 
-        // ½ºÅ©·Ñ ¿µ¿ª Á¶Á¤
+        quaterLines = new();
+        eighthLines = new();
+        sixteenthLines = new();
+
+        // ì»¨í…ì¸  í¬ê¸° ì„¤ì •
         contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, 50000);
-
-        contentHeight = contentRect.sizeDelta.y; // ³»¿ë¹° ¼öÁ÷ Å©±â
-        beatHeight = (rootCanvas.GetComponent<RectTransform>().rect.height) / 4;
-
 
         int numLines = 8;
         float totalWidth = (rootCanvas.GetComponent<RectTransform>().rect.width) * 0.92f;
@@ -67,20 +70,20 @@ public class LineRender : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "PlayMode")
             isPlayMode = true;
 
-        // ¼öÁ÷¼± Á¦ÀÛ
+        // ì„¸ë¡œì„  ìƒì„±
         for (int i = 0; i < numLines; i++)
         {
             float x = -(totalWidth / 2f) + (totalWidth / (numLines - 1)) * i;
             GameObject vLine = Instantiate(verticalLinePrefab, content.transform);
             RectTransform vrt = vLine.GetComponent<RectTransform>();
 
-            // ¾Æ·¡¿¡¼­ ½ÃÀÛÇØ¼­ À§·Î ±×¸®µµ·Ï ¼³Á¤
-            vrt.pivot = new Vector2(0.5f, 0f);               // ¾Æ·¡ ±âÁØ
-            vrt.anchorMin = new Vector2(0.5f, 0f);           // Content ¾Æ·¡
+            // í”¼ë´‡ê³¼ ì•µì»¤ë¥¼ ì•„ë˜ ê¸°ì¤€ìœ¼ë¡œ ì„¤ì •
+            vrt.pivot = new Vector2(0.5f, 0f);               // í”¼ë´‡ ì„¤ì •
+            vrt.anchorMin = new Vector2(0.5f, 0f);           // Content í”¼ë´‡
             vrt.anchorMax = new Vector2(0.5f, 0f);
 
-            vrt.anchoredPosition = new Vector2(x, 0);        // ContentÀÇ ¾Æ·¡ÂÊ¿¡ À§Ä¡
-            vrt.sizeDelta = new Vector2(vrt.sizeDelta.x, 50000f); // À§·Î »¸´Â ³ôÀÌ
+            vrt.anchoredPosition = new Vector2(x, 0);        // Contentì—ì„œ í”¼ë´‡ê¹Œì§€ ê±°ë¦¬
+            vrt.sizeDelta = new Vector2(vrt.sizeDelta.x, 50000f); // ì„¸ë¡œì„  ê¸¸ì´ ì„¤ì •
 
             if (isPlayMode)
             {
@@ -88,7 +91,7 @@ public class LineRender : MonoBehaviour
                 if (img != null)
                 {
                     Color color = img.color;
-                    color.a = 0f; // ¿ÏÀü Åõ¸í
+                    color.a = 0f; // ì™„ì „ íˆ¬ëª…
                     img.color = color;
                 }
             }
@@ -96,7 +99,7 @@ public class LineRender : MonoBehaviour
             verticalLines.Add(vLine);
         }
 
-        //¼öÆò¼± Á¦ÀÛ(1¹Ú)
+        //ê°€ë¡œì„  ìƒì„±(1ë°•)
         for (int i = 0; i <= 125; i++)
         {
             float y = i * 400f;
@@ -104,13 +107,13 @@ public class LineRender : MonoBehaviour
             GameObject hLine = Instantiate(wholeHorizontalLinePrefab, content.transform);
             RectTransform hrt = hLine.GetComponent<RectTransform>();
 
-            // pivot°ú anchor¸¦ ¾Æ·¡ ±âÁØÀ¸·Î ¼³Á¤
+            // pivotê³¼ anchorë¥¼ ì•„ë˜ ê¸°ì¤€ìœ¼ë¡œ ì„¤ì •
             hrt.pivot = new Vector2(0f, 0f);
             hrt.anchorMin = new Vector2(0f, 0f);
-            hrt.anchorMax = new Vector2(1f, 0f); // °¡·Î·Î Stretch µÇµµ·Ï
+            hrt.anchorMax = new Vector2(1f, 0f); // ê°€ë¡œë¡œ Stretch ë˜ë„ë¡
 
-            hrt.anchoredPosition = new Vector2(0f, y); // ¾Æ·¡¿¡¼­ À§·Î ¹èÄ¡
-            hrt.sizeDelta = new Vector2(0f, 12f); // ³ôÀÌ 1px, ³Êºñ´Â anchor·Î °áÁ¤µÊ
+            hrt.anchoredPosition = new Vector2(0f, y); // ì•„ë˜ì—ì„œ ì–¼ë§ˆë‚˜ ë–¨ì–´ì§ˆì§€
+            hrt.sizeDelta = new Vector2(0f, 12f); // ì„¸ë¡œì„  ê¸¸ì´ 1px, ì‹¤ì œ ê¸¸ì´ëŠ” anchorì— ì˜í•´ ê²°ì •ë¨
 
             if (isPlayMode)
             {
@@ -118,7 +121,7 @@ public class LineRender : MonoBehaviour
                 if (img != null)
                 {
                     Color color = img.color;
-                    color.a = 0f; // ¿ÏÀü Åõ¸í
+                    color.a = 0f; // ì™„ì „ íˆ¬ëª…
                     img.color = color;
                 }
             }
@@ -126,7 +129,7 @@ public class LineRender : MonoBehaviour
             horizontalLines.Add(hLine);
         }
 
-        //¼öÆò¼± Á¦ÀÛ(1/2¹Ú)
+        //ê°€ë¡œì„  ìƒì„±(1/2ë°•)
         for (int i = 0; i <= 250; i++)
         {
             float y = i * 200f;
@@ -137,13 +140,13 @@ public class LineRender : MonoBehaviour
                 GameObject hLine = Instantiate(halfHorizontalLinePrefab, content.transform);
                 RectTransform hrt = hLine.GetComponent<RectTransform>();
 
-                // pivot°ú anchor¸¦ ¾Æ·¡ ±âÁØÀ¸·Î ¼³Á¤
+                // pivotê³¼ anchorë¥¼ ì•„ë˜ ê¸°ì¤€ìœ¼ë¡œ ì„¤ì •
                 hrt.pivot = new Vector2(0f, 0f);
                 hrt.anchorMin = new Vector2(0f, 0f);
-                hrt.anchorMax = new Vector2(1f, 0f); // °¡·Î·Î Stretch µÇµµ·Ï
+                hrt.anchorMax = new Vector2(1f, 0f); // ê°€ë¡œë¡œ Stretch ë˜ë„ë¡
 
-                hrt.anchoredPosition = new Vector2(0f, y); // ¾Æ·¡¿¡¼­ À§·Î ¹èÄ¡
-                hrt.sizeDelta = new Vector2(0f, 8f); // ³ôÀÌ 1px, ³Êºñ´Â anchor·Î °áÁ¤µÊ
+                hrt.anchoredPosition = new Vector2(0f, y); // ì•„ë˜ì—ì„œ ì–¼ë§ˆë‚˜ ë–¨ì–´ì§ˆì§€
+                hrt.sizeDelta = new Vector2(0f, 8f); // ì„¸ë¡œì„  ê¸¸ì´ 1px, ì‹¤ì œ ê¸¸ì´ëŠ” anchorì— ì˜í•´ ê²°ì •ë¨
 
                 if (isPlayMode)
                 {
@@ -151,7 +154,7 @@ public class LineRender : MonoBehaviour
                     if (img != null)
                     {
                         Color color = img.color;
-                        color.a = 0f; // ¿ÏÀü Åõ¸í
+                        color.a = 0f; // ì™„ì „ íˆ¬ëª…
                         img.color = color;
                     }
                 }
@@ -160,23 +163,22 @@ public class LineRender : MonoBehaviour
             }
         }
 
-        //¼öÆò¼± Á¦ÀÛ(1/4¹Ú)
+        //ê°€ë¡œì„  ìƒì„±(1/4ë°•)
         for (int i = 0; i <= 500; i++)
         {
             float y = i * 100f;
 
             if (i % 2 != 0)
             {
-
                 GameObject hLine = Instantiate(quaterHorizontalLinePrefab, content.transform);
                 RectTransform hrt = hLine.GetComponent<RectTransform>();
 
-                // pivot°ú anchor¸¦ ¾Æ·¡ ±âÁØÀ¸·Î ¼³Á¤
+                // pivotê³¼ anchorë¥¼ ì•„ë˜ ê¸°ì¤€ìœ¼ë¡œ ì„¤ì •
                 hrt.pivot = new Vector2(0f, 0f);
                 hrt.anchorMin = new Vector2(0f, 0f);
-                hrt.anchorMax = new Vector2(1f, 0f); // °¡·Î·Î Stretch µÇµµ·Ï
+                hrt.anchorMax = new Vector2(1f, 0f); // ê°€ë¡œë¡œ Stretch ë˜ë„ë¡
 
-                hrt.anchoredPosition = new Vector2(0f, y); // ¾Æ·¡¿¡¼­ À§·Î ¹èÄ¡
+                hrt.anchoredPosition = new Vector2(0f, y); // ì•„ë˜ì—ì„œ ì–¼ë§ˆë‚˜ ë–¨ì–´ì§ˆì§€
                 hrt.sizeDelta = new Vector2(0f, 6f);
 
                 if (isPlayMode)
@@ -185,16 +187,17 @@ public class LineRender : MonoBehaviour
                     if (img != null)
                     {
                         Color color = img.color;
-                        color.a = 0f; // ¿ÏÀü Åõ¸í
+                        color.a = 0f; // ì™„ì „ íˆ¬ëª…
                         img.color = color;
                     }
                 }
 
                 horizontalLines.Add(hLine);
+                quaterLines.Add(hLine);
             }
         }
 
-        //¼öÆò¼± Á¦ÀÛ(1/8¹Ú)
+        // (1/8)
         for (int i = 0; i <= 1000; i++)
         {
             float y = i * 50f;
@@ -205,12 +208,12 @@ public class LineRender : MonoBehaviour
                 GameObject hLine = Instantiate(eighthHorizontalLinePrefab, content.transform);
                 RectTransform hrt = hLine.GetComponent<RectTransform>();
 
-                // pivot°ú anchor¸¦ ¾Æ·¡ ±âÁØÀ¸·Î ¼³Á¤
+                // pivotê³¼ anchorë¥¼ ì•„ë˜ ê¸°ì¤€ìœ¼ë¡œ ì„¤ì •
                 hrt.pivot = new Vector2(0f, 0f);
                 hrt.anchorMin = new Vector2(0f, 0f);
-                hrt.anchorMax = new Vector2(1f, 0f); // °¡·Î·Î Stretch µÇµµ·Ï
+                hrt.anchorMax = new Vector2(1f, 0f); // ê°€ë¡œë¡œ Stretch ë˜ë„ë¡
 
-                hrt.anchoredPosition = new Vector2(0f, y); // ¾Æ·¡¿¡¼­ À§·Î ¹èÄ¡
+                hrt.anchoredPosition = new Vector2(0f, y); // ì•„ë˜ì—ì„œ ì–¼ë§ˆë‚˜ ë–¨ì–´ì§ˆì§€
                 hrt.sizeDelta = new Vector2(0f, 4f);
 
                 if (isPlayMode)
@@ -219,16 +222,17 @@ public class LineRender : MonoBehaviour
                     if (img != null)
                     {
                         Color color = img.color;
-                        color.a = 0f; // ¿ÏÀü Åõ¸í
+                        color.a = 0f; // ì™„ì „ íˆ¬ëª…
                         img.color = color;
                     }
                 }
 
                 horizontalLines.Add(hLine);
+                eighthLines.Add(hLine);
             }
         }
 
-        //¼öÆò¼± Á¦ÀÛ(1/16¹Ú)
+        //ê°€ë¡œì„  ìƒì„±(1/16ë°•)
         for (int i = 0; i <= 2000; i++)
         {
             float y = i * 25f;
@@ -239,12 +243,12 @@ public class LineRender : MonoBehaviour
                 GameObject hLine = Instantiate(sixteenthHorizontalLinePrefab, content.transform);
                 RectTransform hrt = hLine.GetComponent<RectTransform>();
 
-                // pivot°ú anchor¸¦ ¾Æ·¡ ±âÁØÀ¸·Î ¼³Á¤
+                // pivotê³¼ anchorë¥¼ ì•„ë˜ ê¸°ì¤€ìœ¼ë¡œ ì„¤ì •
                 hrt.pivot = new Vector2(0f, 0f);
                 hrt.anchorMin = new Vector2(0f, 0f);
-                hrt.anchorMax = new Vector2(1f, 0f); // °¡·Î·Î Stretch µÇµµ·Ï
+                hrt.anchorMax = new Vector2(1f, 0f); // ê°€ë¡œë¡œ Stretch ë˜ë„ë¡
 
-                hrt.anchoredPosition = new Vector2(0f, y); // ¾Æ·¡¿¡¼­ À§·Î ¹èÄ¡
+                hrt.anchoredPosition = new Vector2(0f, y); // ì•„ë˜ì—ì„œ ì–¼ë§ˆë‚˜ ë–¨ì–´ì§ˆì§€
                 hrt.sizeDelta = new Vector2(0f, 2f);
 
                 if (isPlayMode)
@@ -253,16 +257,17 @@ public class LineRender : MonoBehaviour
                     if (img != null)
                     {
                         Color color = img.color;
-                        color.a = 0f; // ¿ÏÀü Åõ¸í
+                        color.a = 0f; // ì™„ì „ íˆ¬ëª…
                         img.color = color;
                     }
                 }
 
                 horizontalLines.Add(hLine);
+                sixteenthLines.Add(hLine);
             }
         }
 
-        //¼öÆò¼±°ú ¼öÁ÷¼±µéÀÇ ÁÂÇ¥¸¦ ´ã´Â ¸®½ºÆ®
+        //ì¢Œí‘œ ì €ì¥
         foreach (var vLine in verticalLines)
             verticalXs.Add(vLine.GetComponent<RectTransform>().anchoredPosition.x);
         foreach (var hLine in horizontalLines)
@@ -277,11 +282,107 @@ public class LineRender : MonoBehaviour
         Init();
     }
 
-
-
-
     void Update()
     {
 
+    }
+
+    public bool isShowQuater = true;
+    public void ShowQuater()
+    {
+        if (isShowQuater)
+        {
+            isShowQuater = false;
+            foreach (var lines in quaterLines)
+            {
+                Image img = lines.GetComponent<Image>();
+                if (img != null)
+                {
+                    Color color = img.color;
+                    color.a = 0f;
+                    img.color = color;
+                }
+            }
+        }
+        else
+        {
+            isShowQuater = true;
+            foreach (var lines in quaterLines)
+            {
+                Image img = lines.GetComponent<Image>();
+                if (img != null)
+                {
+                    Color color = img.color;
+                    color.a = 100f;
+                    img.color = color;
+                }
+            }
+        }
+    }
+
+    public bool isShowEighth = true;
+    public void ShowEighth()
+    {
+        if (isShowEighth)
+        {
+            isShowEighth = false;
+            foreach (var lines in eighthLines)
+            {
+                Image img = lines.GetComponent<Image>();
+                if (img != null)
+                {
+                    Color color = img.color;
+                    color.a = 0f;
+                    img.color = color;
+                }
+            }
+        }
+        else
+        {
+            isShowEighth = true;
+            foreach (var lines in eighthLines)
+            {
+                Image img = lines.GetComponent<Image>();
+                if (img != null)
+                {
+                    Color color = img.color;
+                    color.a = 100f;
+                    img.color = color;
+                }
+            }
+        }
+    }
+
+    public bool isShowSIxteenth = true;
+    public void ShowSixteenth()
+    {
+        if (isShowSIxteenth)
+        {
+            isShowSIxteenth = false;
+            foreach (var lines in sixteenthLines)
+            {
+                Image img = lines.GetComponent<Image>();
+                if (img != null)
+                {
+                    Color color = img.color;
+                    color.a = 0f;
+                    img.color = color;
+                }
+            }
+        }
+        else
+        {
+            isShowSIxteenth = true;
+            foreach (var lines in sixteenthLines)
+            {
+                Image img = lines.GetComponent<Image>();
+                if (img != null)
+                {
+                    Color color = img.color;
+                    color.a = 100f;
+                    img.color = color;
+                }
+            }
+        }
     }
 }

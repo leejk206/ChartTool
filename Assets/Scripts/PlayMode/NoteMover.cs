@@ -3,25 +3,35 @@ using UnityEngine;
 
 public class NoteMover : MonoBehaviour
 {
-    [Tooltip("초당 이동할 Y 픽셀 속도")]
-    public float speed;
-
+    float spawnY;               // 스폰할 때의 Y
+    float spawnTime;            // 스폰 시각 (Time.time)
+    float speed;                // 픽셀/초
     RectTransform rt;
-    float destroyY = -100f; // 이 값보다 내려가면 파괴
-
+    PlayController pc;
+    
     void Awake()
     {
         rt = GetComponent<RectTransform>();
+        pc = GameObject.Find("PlayController").GetComponent<PlayController>();
     }
+    public void Init(float initialY, float speedY)
+    {
+        spawnY = initialY;
+        speed = speedY;
+        spawnTime = Time.time;
+        rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, spawnY);
+    }
+
 
     void Update()
     {
-        // 매 프레임 아래로 이동
-        rt.anchoredPosition += Vector2.down * speed * Time.deltaTime;
+        if (!pc.isPlaying) return;
 
-        if (rt.anchoredPosition.y < destroyY)
-        {
+        float elapsed = Time.time - pc.playStartTime;
+        float newY = spawnY - speed * elapsed;
+        rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, newY);
+
+        if (newY < -100f)
             Destroy(gameObject);
-        }
     }
 }

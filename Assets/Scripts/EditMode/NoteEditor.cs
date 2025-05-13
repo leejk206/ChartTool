@@ -77,21 +77,34 @@ public class NoteEditor : MonoBehaviour
         float y = localContent.y + contentRect.rect.height;
 
         int vIndex = -1;
-        int hIndex = Mathf.FloorToInt(y / 25);
+        
+        // 라인 위치 계산 (25px 간격)
+        int lineIndex = Mathf.RoundToInt(y / 25);  // 가장 가까운 라인의 인덱스
+        float lineY = lineIndex * 25;  // 실제 라인의 Y 좌표
+        
+        // 노트의 중심이 라인 위치가 되도록 설정
+        centerY = lineY;
+        int hIndex = lineIndex;
 
-        centerY = hIndex * 25 + 25 / 2f;
-
-        for (int i = 0; i < lineRender.verticalXs.Count - 1; i++)
+        // 가장 가까운 수직선 찾기
+        float minDistance = float.MaxValue;
+        for (int i = 0; i < lineRender.verticalXs.Count; i++)
         {
-            if (x >= lineRender.verticalXs[i] && x < lineRender.verticalXs[i + 1])
+            float distance = Mathf.Abs(x - lineRender.verticalXs[i]);
+            if (distance < minDistance)
             {
-                centerX = (lineRender.verticalXs[i] + lineRender.verticalXs[i + 1]) / 2f;
+                minDistance = distance;
                 vIndex = i;
-                break;
+                if (i < lineRender.verticalXs.Count - 1)
+                {
+                    centerX = (lineRender.verticalXs[i] + lineRender.verticalXs[i + 1]) / 2f;
+                }
+                else
+                {
+                    centerX = lineRender.verticalXs[i];
+                }
             }
         }
-        //Debug.Log($"수직선 : {vIndex}, 수평선 : {hIndex}");
-        //Debug.Log($"centerX : {centerX}, centerY : {centerY}");
 
         float noteWidth = (lineRender.verticalXs[1] - lineRender.verticalXs[0]);
 
@@ -99,6 +112,7 @@ public class NoteEditor : MonoBehaviour
         {
             return (-1, -1, -1f, -1f, -1f);
         }
+
 
         return (vIndex, hIndex, centerX, centerY, noteWidth);
     }
@@ -114,11 +128,11 @@ public class NoteEditor : MonoBehaviour
             GameObject noteInstance = GameObject.Instantiate(NotePrefab, contentRect);
 
             RectTransform rt = noteInstance.GetComponent<RectTransform>();
-            rt.pivot = new Vector2(0.5f, 0.5f); // 필요 시 조정
+            rt.pivot = new Vector2(0.5f, 0.5f); // 중앙 피벗으로 변경
             rt.anchorMin = new Vector2(0.5f, 0f);
             rt.anchorMax = new Vector2(0.5f, 0f);
             rt.anchoredPosition = new Vector2(centerX, centerY);
-            rt.sizeDelta = new Vector2(noteWidth + 1, 25f);
+            rt.sizeDelta = new Vector2(noteWidth + 1, 15f); // 높이 15px (라인 위아래로 7.5px씩)
 
             Managers.Chart.NormalNotes[vIndex].Add(hIndex);
             Managers.Chart.Notes[vIndex].Add(hIndex, noteInstance);

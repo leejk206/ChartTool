@@ -1,100 +1,179 @@
 using UnityEngine;
-using Newtonsoft.Json; // Json.NET ¼³Ä¡ÇÑ °æ¿ì
+using Newtonsoft.Json; // Json.NET ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½
 using System.IO;
+using System.Collections.Generic;
 
+/// <summary>
+/// í”Œë ˆì´ ëª¨ë“œì˜ ì „ë°˜ì ì¸ ë™ì‘ì„ ì œì–´í•˜ëŠ” ì»¨íŠ¸ë¡¤ëŸ¬ í´ë˜ìŠ¤
+/// </summary>
 public class PlayController : MonoBehaviour
 {
-    [Header("BPM ¼³Á¤")]
-    public float BPM = 120f;
-    [Header("ÇÑ ¹ÚÀÚ´ç ¼¼·Î ÇÈ¼¿")]
-    public float beatHeight = 25f;
-    [Header("Â÷Æ® JSON ÆÄÀÏ ÀÌ¸§")]
-    public string jsonFileName = "chart.json";
-    public AudioClip bgmClip;
+    [Header("BPM ì„¤ì •")]
+    public float BPM = 120f;                    // ê³¡ì˜ BPM ê°’
+    [HideInInspector]
+    public float beatHeight = 25f;              // í•œ ë°•ìê°€ ì°¨ì§€í•˜ëŠ” ì„¸ë¡œ í”½ì…€ í¬ê¸°
+    [Header("ë…¸íŠ¸ JSON íŒŒì¼ ì´ë¦„")]
+    public string jsonFileName = "chart.json";   // ì±„ë³´ ë°ì´í„°ê°€ ì €ì¥ëœ JSON íŒŒì¼ëª…
+    public AudioClip bgmClip;                   // ì¬ìƒí•  ë°°ê²½ìŒì•…
 
-    bool isPlaying;
-    float startTime;
+    [HideInInspector] public float playStartTime;
+
+    public bool isPlaying;                             // í˜„ì¬ í”Œë ˆì´ ì¤‘ì¸ì§€ ì—¬ë¶€
+    public float startTime;                            // í”Œë ˆì´ ì‹œì‘ ì‹œê°„
+
+    private void Awake()
+    {
+        ResetPlayState();
+    }
+
+    private void OnEnable()
+    {
+        ResetPlayState();
+    }
 
     /// <summary>
-    /// ScrollView ¾øÀÌ Canvas À§¿¡ ¸ğµç ³ëÆ®¸¦ ½ºÆùÇÏ°í,
-    /// °¢°¢ NoteMover¸¦ ÅëÇØ ¾Æ·¡·Î ½ºÅ©·Ñ(ÀÌµ¿)½ÃÅµ´Ï´Ù.
+    /// í”Œë ˆì´ ìƒíƒœë¥¼ ì´ˆê¸°í™”í•˜ëŠ” ë©”ì„œë“œ
     /// </summary>
-    public void PlayModeRenderNotesNoScroll()
+    private void ResetPlayState()
     {
-        // 1) ¾À¿¡ ³²Àº ³ëÆ®¸¸ »èÁ¦ (µ¥ÀÌÅÍ´Â LoadChart ÀÌÈÄ ¼¼ÆÃµÈ »óÅÂ)
-        Managers.Chart.ClearAllNotesFromScene();
+        isPlaying = false;
+        startTime = 0f;
+        playStartTime = 0f;
 
-        // 2) Canvas RectTransform °¡Á®¿À±â
-        RectTransform canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
-
-        // 3) ¿­ °³¼ö, ÀüÃ¼ Æø, ½ÃÀÛ X, ¼¿ ³Êºñ °è»ê
-        int numLines = Managers.Chart.NormalNotes.Count;   // º¸Åë 7
-        float totalW = canvasRect.rect.width;
-        float startX = -totalW / 2f;
-        float cellWidth = totalW / (numLines - 1);
-
-        // 4) ³ëÆ® ÀÌµ¿ ¼Óµµ °è»ê (px/sec)
-        float speedY = beatHeight * BPM / 60f;
-
-        // 5) JSON µ¥ÀÌÅÍ ¼øÈ¸ÇÏ¸ç ³ëÆ® ÀÎ½ºÅÏ½ºÈ­ & NoteMover ºÎÂø
-        for (int v = 0; v < numLines; v++)
+        // ë…¸íŠ¸ ì œê±°
+        if (Managers.Chart != null)
         {
-            float centerX = startX + cellWidth * v;
+            Managers.Chart.ClearAllNotesFromScene();
+        }
+
+        // BGM ì •ì§€
+        if (AudioController.Instance != null)
+        {
+            AudioController.Instance.StopBGM();
+        }
+
+        // ë¼ì¸ ë Œë”ëŸ¬ ì´ˆê¸°í™”
+        PlayModeLineRender lineRender = GameObject.Find("PlayModeLineRender")?.GetComponent<PlayModeLineRender>();
+        if (lineRender != null)
+        {
+            lineRender.OnPlayStop();
+        }
+    }
+
+    /// <summary>
+    /// í”Œë ˆì´ ëª¨ë“œì—ì„œ ë…¸íŠ¸ë¥¼ ë Œë”ë§í•˜ëŠ” ë©”ì„œë“œ
+    /// </summary>
+    private void PlayModeRenderNotes()
+    {
+        // 1ë°•ìë‹¹ ì‹œê°„(ì´ˆ) ê³„ì‚°
+        float secondsPerBeat = 60f / BPM;
+        // 1ë°•ìë‹¹ ì´ë™ ê±°ë¦¬(í”½ì…€)ë¥¼ ì‹œê°„ìœ¼ë¡œ ë‚˜ëˆ„ì–´ ì†ë„ ê³„ì‚°
+        float speedY = (beatHeight * 16f) / secondsPerBeat; // 16ì€ í•œ ë§ˆë””ì˜ 16ë¹„íŠ¸ë¥¼ ì˜ë¯¸
+        float centerY = 800f; // í™”ë©´ ì¤‘ì•™ Y ìœ„ì¹˜
+
+        // ë…¸íŠ¸ ë°ì´í„° ìˆœíšŒ
+        for (int v = 0; v < Managers.Chart.NormalNotes.Count; v++)
+        {
             foreach (int h in Managers.Chart.NormalNotes[v])
             {
-                float centerY = h * beatHeight + (beatHeight / 2f);
+                // ë…¸íŠ¸ í”„ë¦¬íŒ¹ ë¡œë“œ ë° ìƒì„±
+                GameObject notePrefab = Resources.Load<GameObject>("Prefabs/Notes/NormalNote");
+                if (notePrefab == null)
+                {
+                    Debug.LogError("ë…¸íŠ¸ í”„ë¦¬íŒ¹ì„ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤: Prefabs/Notes/NormalNote");
+                    continue;
+                }
 
-                // ÇÁ¸®ÆÕ ·Îµå & ºÎ¸ğ´Â Canvas
-                GameObject prefab = Resources.Load<GameObject>("Prefabs/Notes/NormalNote");
-                GameObject noteInstance = Instantiate(prefab, canvasRect);
+                GameObject noteInstance = Instantiate(notePrefab, GameObject.Find("RootCanvas").transform);
 
-                // RectTransform ¼¼ÆÃ
+                // RectTransform ì„¤ì •
                 RectTransform rt = noteInstance.GetComponent<RectTransform>();
                 rt.pivot = new Vector2(0.5f, 0.5f);
                 rt.anchorMin = new Vector2(0.5f, 0f);
                 rt.anchorMax = new Vector2(0.5f, 0f);
-                rt.anchoredPosition = new Vector2(centerX, centerY);
-                rt.sizeDelta = new Vector2(cellWidth, beatHeight);
 
-                // NoteMover ºÎÂø
+                // ë…¸íŠ¸ ìœ„ì¹˜ ì„¤ì •
+                float totalWidth = Screen.width * 0.92f;
+                float x = -(totalWidth / 2f) + (totalWidth / 7f) * v;
+                float y = centerY + (h * beatHeight);
+
+                rt.anchoredPosition = new Vector2(x, y);
+                rt.sizeDelta = new Vector2(50f, 20f);
+
+                // NoteMover ì»´í¬ë„ŒíŠ¸ ì¶”ê°€ í›„ Init í˜¸ì¶œ
                 var mover = noteInstance.AddComponent<NoteMover>();
-                mover.speed = speedY;
+                mover.Init(y, speedY);
 
-                // ·±Å¸ÀÓ °ü¸®¿ë µñ¼Å³Ê¸®¿¡ ÀúÀå
-                Managers.Chart.Notes[v].Add(h, noteInstance);
+                // ìƒì„±ëœ ë…¸íŠ¸ ì €ì¥
+                if (Managers.Chart.Notes.Count <= v)
+                {
+                    Managers.Chart.Notes.Add(new Dictionary<int, GameObject>());
+                }
+                Managers.Chart.Notes[v][h] = noteInstance;
             }
         }
-
-        Debug.Log("PlayMode¿ë ³ëÆ® ·»´õ¸µ ¿Ï·á");
     }
 
-    // ¿¹: Play ½ÃÀÛ ½Ã
+    /// <summary>
+    /// í”Œë ˆì´ ì‹œì‘ ë©”ì„œë“œ
+    /// </summary>
     public void BeginPlay()
     {
+        // ì´ì „ ìƒíƒœ ì´ˆê¸°í™”
+        PlayStop();
+
+        // í”Œë ˆì´ ì‹œì‘ ì‹œê°„ ê¸°ë¡ ë° ìƒíƒœ ì„¤ì •
+        playStartTime = Time.time;
+        startTime = Time.time;
+        isPlaying = true;
+
+        // ì±„ë³´ ë°ì´í„° ë¡œë“œ ë° ë Œë”ë§
+        string path = Path.Combine(Application.persistentDataPath, "chart.json");
+        Managers.Chart.LoadChartFromJson(path);
+        PlayModeRenderNotes(); // ë…¸íŠ¸ ë Œë”ë§ ë°©ì‹ ë³€ê²½
+
+        // ë¼ì¸ ë Œë”ëŸ¬ í”Œë ˆì´ ì‹œì‘ ì•Œë¦¼
+        PlayModeLineRender lineRender = GameObject.Find("PlayModeLineRender").GetComponent<PlayModeLineRender>();
+        if (lineRender != null)
+        {
+            lineRender.OnPlayStart();
+        }
+
+        // BGM ì¬ìƒ ì„¤ì •
         if (bgmClip != null)
         {
             AudioController.Instance.PlayBGM(bgmClip);
-            Debug.Log("bgmcilp not null");
         }
         else
         {
             bgmClip = Resources.Load<AudioClip>($"AudioClip1");
             AudioController.Instance.PlayBGM(bgmClip);
-            Debug.Log("bgmcilp null");
-
         }
+    }
 
-        string path = Path.Combine(Application.persistentDataPath, "chart.json");
+    /// <summary>
+    /// í”Œë ˆì´ ì •ì§€ ë©”ì„œë“œ
+    /// </summary>
+    public void PlayStop()
+    {
+        // í”Œë ˆì´ ìƒíƒœ ë³€ê²½
+        isPlaying = false;
+        
+        // BGM ì •ì§€
+        AudioController.Instance.StopBGM();
 
-        // 1) ¾À ¿ÀºêÁ§Æ®¸¸ »èÁ¦
+        // ë…¸íŠ¸ ì œê±°
         Managers.Chart.ClearAllNotesFromScene();
 
-        // 2) JSON µ¥ÀÌÅÍ ·Îµå (µ¥ÀÌÅÍ ±¸Á¶´Â Init() or wrapper·Î Ã¤¿öÁü)
-        Managers.Chart.LoadChartFromJson(path);
+        // ë¼ì¸ ë Œë”ëŸ¬ ì •ì§€ ì•Œë¦¼
+        PlayModeLineRender lineRender = GameObject.Find("PlayModeLineRender").GetComponent<PlayModeLineRender>();
+        if (lineRender != null)
+        {
+            lineRender.OnPlayStop();
+        }
 
-        Managers.Chart.PlayModeRenderNotesFromData();
-
-        startTime = Time.time;
-        isPlaying = true;
+        // ì‹œì‘ ì‹œê°„ ì´ˆê¸°í™”
+        startTime = 0f;
+        playStartTime = 0f;
     }
 }
