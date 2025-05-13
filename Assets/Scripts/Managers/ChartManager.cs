@@ -167,52 +167,52 @@ public class ChartManager
 
     /// <summary>
     /// 플레이 모드에서 노트 데이터를 기반으로 노트 렌더링
-    /// </summary>
-    public void PlayModeRenderNotesFromData(float beatHeight = 25f)
-    {
-        // 1) 기존 노트 모두 제거
-        ClearAllNotesFromScene();
+    ///// </summary>
+    //public void PlayModeRenderNotesFromData(float beatHeight = 25f)
+    //{
+    //    // 1) 기존 노트 모두 제거
+    //    ClearAllNotesFromScene();
 
-        // 2) 캔버스 RectTransform 가져오기
-        var canvasRect = GameObject.Find("RootCanvas")
-                                   .GetComponent<RectTransform>();
+    //    // 2) 캔버스 RectTransform 가져오기
+    //    var canvasRect = GameObject.Find("RootCanvas")
+    //                               .GetComponent<RectTransform>();
 
-        // 3) 레이아웃 계산
-        int numLines = Managers.Chart.NormalNotes.Count;
-        float totalW = canvasRect.rect.width;
-        float startX = -totalW / 2f;
-        float cellWidth = totalW / (numLines - 1) * 0.75f;
+    //    // 3) 레이아웃 계산
+    //    int numLines = Managers.Chart.NormalNotes.Count;
+    //    float totalW = canvasRect.rect.width;
+    //    float startX = -totalW / 2f;
+    //    float cellWidth = totalW / (numLines - 1) * 0.75f;
 
-        // 4) BPM 기반 속도 계산
-        //    beatHeight*16 → 1박(16틱)당 픽셀
-        //    (BPM/60)    → 초당 박자 수
-        var pc = GameObject.Find("PlayController").GetComponent<PlayController>();
-        float speedY = beatHeight * 16f * (pc.BPM / 60f);
+    //    // 4) BPM 기반 속도 계산
+    //    //    beatHeight*16 → 1박(16틱)당 픽셀
+    //    //    (BPM/60)    → 초당 박자 수
+    //    var pc = GameObject.Find("PlayController").GetComponent<PlayController>();
+    //    float speedY = beatHeight * 16f * (pc.BPM / 60f);
 
-        // 5) 노트 생성 및 절대 시간 기반 초기화
-        for (int v = 0; v < numLines; v++)
-        {
-            float centerX = startX + cellWidth * v + cellWidth;
-            foreach (int h in Managers.Chart.NormalNotes[v])
-            {
-                float centerY = h * beatHeight + (beatHeight / 2f);
-                var prefab = Resources.Load<GameObject>("Prefabs/Notes/NormalNote");
-                var noteGO = GameObject.Instantiate(prefab, canvasRect);
-                var rt = noteGO.GetComponent<RectTransform>();
-                rt.pivot = new Vector2(0.5f, 0.5f);
-                rt.anchorMin = new Vector2(0.5f, 0f);
-                rt.anchorMax = new Vector2(0.5f, 0f);
-                rt.sizeDelta = new Vector2(cellWidth, beatHeight);
-                rt.anchoredPosition = new Vector2(centerX, centerY);
+    //    // 5) 노트 생성 및 절대 시간 기반 초기화
+    //    for (int v = 0; v < numLines; v++)
+    //    {
+    //        float centerX = startX + cellWidth * v + cellWidth;
+    //        foreach (int h in Managers.Chart.NormalNotes[v])
+    //        {
+    //            float centerY = h * beatHeight + (beatHeight / 2f);
+    //            var prefab = Resources.Load<GameObject>("Prefabs/Notes/NormalNote");
+    //            var noteGO = GameObject.Instantiate(prefab, canvasRect);
+    //            var rt = noteGO.GetComponent<RectTransform>();
+    //            rt.pivot = new Vector2(0.5f, 0.5f);
+    //            rt.anchorMin = new Vector2(0.5f, 0f);
+    //            rt.anchorMax = new Vector2(0.5f, 0f);
+    //            rt.sizeDelta = new Vector2(cellWidth, beatHeight);
+    //            rt.anchoredPosition = new Vector2(centerX, centerY);
 
-                // NoteMover.Init(spawnY, speedY) 에 BPM 기반 speedY 전달
-                var mover = noteGO.AddComponent<NoteMover>();
-                mover.Init(centerY, speedY);
+    //            // NoteMover.Init(spawnY, speedY) 에 BPM 기반 speedY 전달
+    //            var mover = noteGO.AddComponent<NoteMover>();
+    //            mover.Init(centerY, speedY);
 
-                Managers.Chart.Notes[v].Add(h, noteGO);
-            }
-        }
-    }
+    //            Managers.Chart.Notes[v].Add(h, noteGO);
+    //        }
+    //    }
+    //}
 
     /// <summary>
     /// 씬에서 모든 노트 제거

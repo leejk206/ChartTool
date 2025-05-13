@@ -102,7 +102,7 @@ public class PlayController : MonoBehaviour
 
                 // NoteMover 컴포넌트 추가 후 Init 호출
                 var mover = noteInstance.AddComponent<NoteMover>();
-                mover.Init(y, speedY);
+                mover.Init(y, speedY, this);  // 현재 PlayController 인스턴스를 전달
 
                 // 생성된 노트 저장
                 if (Managers.Chart.Notes.Count <= v)
@@ -119,24 +119,28 @@ public class PlayController : MonoBehaviour
     /// </summary>
     public void BeginPlay()
     {
-        // 이전 상태 초기화
-        PlayStop();
+        Debug.Log($"BeginPlay on “{gameObject.name}” ID={GetInstanceID()}");
 
         // 플레이 시작 시간 기록 및 상태 설정
         playStartTime = Time.time;
         startTime = Time.time;
         isPlaying = true;
+        Debug.Log($"[BeginPlay] 상태 설정 완료 - Controller Instance ID: {gameObject.GetInstanceID()}, isPlaying: {isPlaying}, playStartTime: {playStartTime}");
 
         // 채보 데이터 로드 및 렌더링
         string path = Path.Combine(Application.persistentDataPath, "chart.json");
         Managers.Chart.LoadChartFromJson(path);
+        Debug.Log($"[BeginPlay] 채보 데이터 로드 완료 - Controller Instance ID: {gameObject.GetInstanceID()}");
+        
         PlayModeRenderNotes(); // 노트 렌더링 방식 변경
+        Debug.Log($"[BeginPlay] 노트 렌더링 완료 - Controller Instance ID: {gameObject.GetInstanceID()}");
 
         // 라인 렌더러 플레이 시작 알림
         PlayModeLineRender lineRender = GameObject.Find("PlayModeLineRender").GetComponent<PlayModeLineRender>();
         if (lineRender != null)
         {
             lineRender.OnPlayStart();
+            Debug.Log($"[BeginPlay] 라인 렌더러 시작 - Controller Instance ID: {gameObject.GetInstanceID()}");
         }
 
         // BGM 재생 설정
@@ -149,6 +153,8 @@ public class PlayController : MonoBehaviour
             bgmClip = Resources.Load<AudioClip>($"AudioClip1");
             AudioController.Instance.PlayBGM(bgmClip);
         }
+        
+        Debug.Log($"[BeginPlay] 종료 - Controller Instance ID: {gameObject.GetInstanceID()}, isPlaying: {isPlaying}, playStartTime: {playStartTime}");
     }
 
     /// <summary>
