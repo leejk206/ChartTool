@@ -19,9 +19,10 @@ public class NoteEditor : MonoBehaviour
     public void Init()
     {
         Managers.Input.KeyAction -= AddNormalNote;
-        Managers.Input.KeyAction -= AddDragNote;
+        Managers.Input.KeyAction -= AddHoldNote;
         Managers.Input.KeyAction -= AddSlideNote;
-        Managers.Input.KeyAction -= AddFlickNote;
+        Managers.Input.KeyAction -= AddUpFlickNote;
+        Managers.Input.KeyAction -= AddDownFlickNote;
         Managers.Input.KeyAction -= _keypadKeyAction;
 
         _keypadKeyAction = () =>
@@ -32,7 +33,7 @@ public class NoteEditor : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.Keypad2))
             {
-                AddDragNote();
+                AddHoldNote();
             }
             else if (Input.GetKeyDown(KeyCode.Keypad3))
             {
@@ -40,7 +41,11 @@ public class NoteEditor : MonoBehaviour
             }
             else if (Input.GetKeyDown(KeyCode.Keypad4))
             {
-                AddFlickNote();
+                AddUpFlickNote();
+            }
+            else if (Input.GetKeyDown(KeyCode.Keypad5))
+            {
+                AddDownFlickNote();
             }
         };
 
@@ -122,7 +127,25 @@ public class NoteEditor : MonoBehaviour
         (int vIndex, int hIndex, float centerX, float centerY, float noteWidth) = GetMousePointer();
         if (vIndex == -1) return;
 
-        if (!Managers.Chart.NormalNotes[vIndex].Contains(hIndex))
+        if (Managers.Chart.Notes[vIndex].ContainsKey(hIndex))
+        {
+            if (Managers.Chart.Notes[vIndex][hIndex].CompareTag("NormalNote"))
+            {
+                if (Managers.Chart.Notes[vIndex].TryGetValue(hIndex, out GameObject go))
+                {
+                    GameObject.Destroy(go);
+                    Managers.Chart.Notes[vIndex].Remove(hIndex);
+                }
+
+                Managers.Chart.NormalNotes[vIndex].Remove(hIndex);
+            }
+            else
+            {
+                Debug.Log("다른 노트가 해당 위치에 이미 존재합니다.");
+            }
+        }
+
+        else
         {
             GameObject NotePrefab = Resources.Load<GameObject>("Prefabs/Notes/NormalNote");
             GameObject noteInstance = GameObject.Instantiate(NotePrefab, contentRect);
@@ -137,22 +160,10 @@ public class NoteEditor : MonoBehaviour
             Managers.Chart.NormalNotes[vIndex].Add(hIndex);
             Managers.Chart.Notes[vIndex].Add(hIndex, noteInstance);
         }
-        else
-        {
-            if (Managers.Chart.Notes[vIndex].TryGetValue(hIndex, out GameObject go))
-            {
-                GameObject.Destroy(go);
-                Managers.Chart.Notes[vIndex].Remove(hIndex);
-            }
-
-            Managers.Chart.NormalNotes[vIndex].Remove(hIndex);
-        }
-
-        
 
     }
 
-    public void AddDragNote()
+    public void AddHoldNote()
     {
         
 
@@ -160,36 +171,134 @@ public class NoteEditor : MonoBehaviour
 
     public void AddSlideNote()
     {
-        Vector2 localContent;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            contentRect,
-            Input.mousePosition,
-            null,
-            out localContent);
+        (int vIndex, int hIndex, float centerX, float centerY, float noteWidth) = GetMousePointer();
+        if (vIndex == -1) return;
 
-        // 2) "아래 기준" Y좌표 계산: 
-        //    localContent.y (위가 0, 아래가 –contentHeight) 에 contentHeight를 더하면
-        //    아래(0)에서부터 위(contentHeight)로 증가하는 Y가 됨
-        float pointerYFromBottom = localContent.y + contentRect.rect.height;
+        if (Managers.Chart.Notes[vIndex].ContainsKey(hIndex))
+        {
+            if (Managers.Chart.Notes[vIndex][hIndex].CompareTag("SlideNote"))
+            {
+                if (Managers.Chart.Notes[vIndex].TryGetValue(hIndex, out GameObject go))
+                {
+                    GameObject.Destroy(go);
+                    Managers.Chart.Notes[vIndex].Remove(hIndex);
+                }
 
-        // 확인 로그
-        Debug.Log($"[Pointer Y from bottom] {pointerYFromBottom}");
+                Managers.Chart.SlideNotes[vIndex].Remove(hIndex);
+            }
+            else
+            {
+                Debug.Log("다른 노트가 해당 위치에 이미 존재합니다.");
+            }
+        }
+
+        else
+        {
+            GameObject NotePrefab = Resources.Load<GameObject>("Prefabs/Notes/SlideNote");
+            GameObject noteInstance = GameObject.Instantiate(NotePrefab, contentRect);
+
+            RectTransform rt = noteInstance.GetComponent<RectTransform>();
+            rt.pivot = new Vector2(0.5f, 0.5f); // 중앙 피벗으로 변경
+            rt.anchorMin = new Vector2(0.5f, 0f);
+            rt.anchorMax = new Vector2(0.5f, 0f);
+            rt.anchoredPosition = new Vector2(centerX, centerY);
+            rt.sizeDelta = new Vector2(noteWidth + 1, 15f); // 높이 15px (라인 위아래로 7.5px씩)
+
+            Managers.Chart.SlideNotes[vIndex].Add(hIndex);
+            Managers.Chart.Notes[vIndex].Add(hIndex, noteInstance);
+        }
     }
 
-    public void AddFlickNote()
+    public void AddUpFlickNote()
     {
+        (int vIndex, int hIndex, float centerX, float centerY, float noteWidth) = GetMousePointer();
+        if (vIndex == -1) return;
 
+        if (Managers.Chart.Notes[vIndex].ContainsKey(hIndex))
+        {
+            if (Managers.Chart.Notes[vIndex][hIndex].CompareTag("UpFlickNote"))
+            {
+                if (Managers.Chart.Notes[vIndex].TryGetValue(hIndex, out GameObject go))
+                {
+                    GameObject.Destroy(go);
+                    Managers.Chart.Notes[vIndex].Remove(hIndex);
+                }
+
+                Managers.Chart.UpFlickNotes[vIndex].Remove(hIndex);
+            }
+            else
+            {
+                Debug.Log("다른 노트가 해당 위치에 이미 존재합니다.");
+            }
+        }
+
+        else
+        {
+            GameObject NotePrefab = Resources.Load<GameObject>("Prefabs/Notes/UpFlickNote");
+            GameObject noteInstance = GameObject.Instantiate(NotePrefab, contentRect);
+
+            RectTransform rt = noteInstance.GetComponent<RectTransform>();
+            rt.pivot = new Vector2(0.5f, 0.5f); // 중앙 피벗으로 변경
+            rt.anchorMin = new Vector2(0.5f, 0f);
+            rt.anchorMax = new Vector2(0.5f, 0f);
+            rt.anchoredPosition = new Vector2(centerX, centerY);
+            rt.sizeDelta = new Vector2(noteWidth + 1, 15f); // 높이 15px (라인 위아래로 7.5px씩)
+
+            Managers.Chart.UpFlickNotes[vIndex].Add(hIndex);
+            Managers.Chart.Notes[vIndex].Add(hIndex, noteInstance);
+        }
     }
 
-    
+    public void AddDownFlickNote()
+    {
+        (int vIndex, int hIndex, float centerX, float centerY, float noteWidth) = GetMousePointer();
+        if (vIndex == -1) return;
+
+        if (Managers.Chart.Notes[vIndex].ContainsKey(hIndex))
+        {
+            if (Managers.Chart.Notes[vIndex][hIndex].CompareTag("DownFlickNote"))
+            {
+                if (Managers.Chart.Notes[vIndex].TryGetValue(hIndex, out GameObject go))
+                {
+                    GameObject.Destroy(go);
+                    Managers.Chart.Notes[vIndex].Remove(hIndex);
+                }
+
+                Managers.Chart.DownFlickNotes[vIndex].Remove(hIndex);
+            }
+            else
+            {
+                Debug.Log("다른 노트가 해당 위치에 이미 존재합니다.");
+            }
+        }
+
+        else
+        {
+            GameObject NotePrefab = Resources.Load<GameObject>("Prefabs/Notes/DownFlickNote");
+            GameObject noteInstance = GameObject.Instantiate(NotePrefab, contentRect);
+
+            RectTransform rt = noteInstance.GetComponent<RectTransform>();
+            rt.pivot = new Vector2(0.5f, 0.5f); // 중앙 피벗으로 변경
+            rt.anchorMin = new Vector2(0.5f, 0f);
+            rt.anchorMax = new Vector2(0.5f, 0f);
+            rt.anchoredPosition = new Vector2(centerX, centerY);
+            rt.sizeDelta = new Vector2(noteWidth + 1, 15f); // 높이 15px (라인 위아래로 7.5px씩)
+
+            Managers.Chart.DownFlickNotes[vIndex].Add(hIndex);
+            Managers.Chart.Notes[vIndex].Add(hIndex, noteInstance);
+        }
+    }
+
+
 
     public void OnDestroy()
     {
         // 객체가 파괴될 때도 구독 해제
         Managers.Input.KeyAction -= AddNormalNote;
-        Managers.Input.KeyAction -= AddDragNote;
+        Managers.Input.KeyAction -= AddHoldNote;
         Managers.Input.KeyAction -= AddSlideNote;
-        Managers.Input.KeyAction -= AddFlickNote;
+        Managers.Input.KeyAction -= AddUpFlickNote;
+        Managers.Input.KeyAction -= AddDownFlickNote;
         Managers.Input.KeyAction -= _keypadKeyAction;
     }
 }

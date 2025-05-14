@@ -27,7 +27,6 @@ public class NoteMover : MonoBehaviour
         }
 
         rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, spawnY);
-        Debug.Log($"[{gameObject.name}] Init - PlayController Instance ID: {(pc != null ? pc.gameObject.GetInstanceID().ToString() : "null")}, isPlaying: {(pc != null ? pc.isPlaying.ToString() : "pc is null")}");
     }
 
     void Update()
@@ -42,7 +41,6 @@ public class NoteMover : MonoBehaviour
         {
             return;
         }
-        Debug.Log($"[{gameObject.name}] Update - PlayController Instance ID: {pc.gameObject.GetInstanceID()}, isPlaying: {pc.isPlaying}, playStartTime: {pc.playStartTime}");
 
         float elapsed = Time.time - pc.playStartTime;
         float newY = spawnY - speed * elapsed;

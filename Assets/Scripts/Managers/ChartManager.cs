@@ -14,7 +14,8 @@ public class ChartManager
     public List<List<int>> NormalNotes;                   // 일반 노트 데이터
     public List<List<int>> DragNotes;                     // 드래그 노트 데이터
     public List<List<int>> SlideNotes;                    // 슬라이드 노트 데이터
-    public List<List<int>> FlickNotes;                    // 플릭 노트 데이터
+    public List<List<int>> UpFlickNotes;                    // up 플릭 노트 데이터
+    public List<List<int>> DownFlickNotes;                    // down 플릭 노트 데이터
 
     /// <summary>
     /// 매니저 초기화 메서드
@@ -32,8 +33,11 @@ public class ChartManager
         SlideNotes = new List<List<int>>();
         for (int i = 0; i < 7; i++) SlideNotes.Add(new List<int>());
 
-        FlickNotes = new List<List<int>>();
-        for (int i = 0; i < 7; i++) FlickNotes.Add(new List<int>());
+        UpFlickNotes = new List<List<int>>();
+        for (int i = 0; i < 7; i++) UpFlickNotes.Add(new List<int>());
+
+        DownFlickNotes = new List<List<int>>();
+        for (int i = 0; i < 7; i++) DownFlickNotes.Add(new List<int>());
         #endregion
 
         // 실제 노트 게임오브젝트 참조를 저장할 딕셔너리 초기화
@@ -55,7 +59,8 @@ public class ChartManager
         public List<List<int>> NormalNotes;
         public List<List<int>> DragNotes;
         public List<List<int>> SlideNotes;
-        public List<List<int>> FlickNotes;
+        public List<List<int>> UpFlickNotes;
+        public List<List<int>> DownFlickNotes;
     }
 
     /// <summary>
@@ -69,7 +74,8 @@ public class ChartManager
             NormalNotes = NormalNotes,
             DragNotes = DragNotes,
             SlideNotes = SlideNotes,
-            FlickNotes = FlickNotes
+            UpFlickNotes = UpFlickNotes,
+            DownFlickNotes = DownFlickNotes
         };
 
         // JSON 형식으로 직렬화하여 파일 저장
@@ -106,7 +112,8 @@ public class ChartManager
         NormalNotes = wrapper.NormalNotes ?? CreateEmptyNoteList();
         DragNotes = wrapper.DragNotes ?? CreateEmptyNoteList();
         SlideNotes = wrapper.SlideNotes ?? CreateEmptyNoteList();
-        FlickNotes = wrapper.FlickNotes ?? CreateEmptyNoteList();
+        UpFlickNotes = wrapper.UpFlickNotes ?? CreateEmptyNoteList();
+        DownFlickNotes = wrapper.DownFlickNotes ?? CreateEmptyNoteList();
     }
 
     /// <summary>

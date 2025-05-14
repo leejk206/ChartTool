@@ -21,6 +21,8 @@ public class PlayController : MonoBehaviour
     public bool isPlaying;                             // 현재 플레이 중인지 여부
     public float startTime;                            // 플레이 시작 시간
 
+    PlayModeLineRender lineRender;
+
     private void Awake()
     {
         ResetPlayState();
@@ -53,7 +55,7 @@ public class PlayController : MonoBehaviour
         }
 
         // 라인 렌더러 초기화
-        PlayModeLineRender lineRender = GameObject.Find("PlayModeLineRender")?.GetComponent<PlayModeLineRender>();
+        lineRender = GameObject.Find("PlayModeLineRender")?.GetComponent<PlayModeLineRender>();
         if (lineRender != null)
         {
             lineRender.OnPlayStop();
@@ -69,9 +71,9 @@ public class PlayController : MonoBehaviour
         float secondsPerBeat = 60f / BPM;
         // 1박자당 이동 거리(픽셀)를 시간으로 나누어 속도 계산
         float speedY = (beatHeight * 16f) / secondsPerBeat; // 16은 한 마디의 16비트를 의미
-        float centerY = 800f; // 화면 중앙 Y 위치
+                                                            //float centerY = 800f; // 화면 중앙 Y 위치
 
-        // 노트 데이터 순회
+        #region NormalNoteRender
         for (int v = 0; v < Managers.Chart.NormalNotes.Count; v++)
         {
             foreach (int h in Managers.Chart.NormalNotes[v])
@@ -90,15 +92,13 @@ public class PlayController : MonoBehaviour
                 RectTransform rt = noteInstance.GetComponent<RectTransform>();
                 rt.pivot = new Vector2(0.5f, 0.5f);
                 rt.anchorMin = new Vector2(0.5f, 0f);
-                rt.anchorMax = new Vector2(0.5f, 0f);
-
-                // 노트 위치 설정
-                float totalWidth = Screen.width * 0.92f;
-                float x = -(totalWidth / 2f) + (totalWidth / 7f) * v;
-                float y = centerY + (h * beatHeight);
+                rt.anchorMax = new Vector2(0.5f, 0f); 
+                float totalWidth = Screen.width;
+                float x = (lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x + lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x) / 2;
+                float y = (h * beatHeight) + 5f;
 
                 rt.anchoredPosition = new Vector2(x, y);
-                rt.sizeDelta = new Vector2(50f, 20f);
+                rt.sizeDelta = new Vector2((lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x - lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x) * 0.85f, 20f);
 
                 // NoteMover 컴포넌트 추가 후 Init 호출
                 var mover = noteInstance.AddComponent<NoteMover>();
@@ -112,6 +112,135 @@ public class PlayController : MonoBehaviour
                 Managers.Chart.Notes[v][h] = noteInstance;
             }
         }
+        #endregion
+
+        #region HoldNoteRender
+
+        #endregion
+
+        #region SlideNoteRender
+        for (int v = 0; v < Managers.Chart.SlideNotes.Count; v++)
+        {
+            foreach (int h in Managers.Chart.SlideNotes[v])
+            {
+                // 노트 프리팹 로드 및 생성
+                GameObject notePrefab = Resources.Load<GameObject>("Prefabs/Notes/SlideNote");
+                if (notePrefab == null)
+                {
+                    Debug.LogError("노트 프리팹을 찾을 수 없습니다: Prefabs/Notes/SlideNote");
+                    continue;
+                }
+
+                GameObject noteInstance = Instantiate(notePrefab, GameObject.Find("RootCanvas").transform);
+
+                // RectTransform 설정
+                RectTransform rt = noteInstance.GetComponent<RectTransform>();
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.anchorMin = new Vector2(0.5f, 0f);
+                rt.anchorMax = new Vector2(0.5f, 0f);
+                float totalWidth = Screen.width;
+                float x = (lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x + lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x) / 2;
+                float y = (h * beatHeight) + 5f;
+
+                rt.anchoredPosition = new Vector2(x, y);
+                rt.sizeDelta = new Vector2((lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x - lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x) * 0.85f, 20f);
+
+                // NoteMover 컴포넌트 추가 후 Init 호출
+                var mover = noteInstance.AddComponent<NoteMover>();
+                mover.Init(y, speedY, this);  // 현재 PlayController 인스턴스를 전달
+
+                // 생성된 노트 저장
+                if (Managers.Chart.Notes.Count <= v)
+                {
+                    Managers.Chart.Notes.Add(new Dictionary<int, GameObject>());
+                }
+                Managers.Chart.Notes[v][h] = noteInstance;
+            }
+        }
+        #endregion
+
+        #region UpFlickNoteRender
+        for (int v = 0; v < Managers.Chart.UpFlickNotes.Count; v++)
+        {
+            foreach (int h in Managers.Chart.UpFlickNotes[v])
+            {
+                // 노트 프리팹 로드 및 생성
+                GameObject notePrefab = Resources.Load<GameObject>("Prefabs/Notes/UpFlickNote");
+                if (notePrefab == null)
+                {
+                    Debug.LogError("노트 프리팹을 찾을 수 없습니다: Prefabs/Notes/UpFlickNote");
+                    continue;
+                }
+
+                GameObject noteInstance = Instantiate(notePrefab, GameObject.Find("RootCanvas").transform);
+
+                // RectTransform 설정
+                RectTransform rt = noteInstance.GetComponent<RectTransform>();
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.anchorMin = new Vector2(0.5f, 0f);
+                rt.anchorMax = new Vector2(0.5f, 0f);
+                float totalWidth = Screen.width;
+                float x = (lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x + lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x) / 2;
+                float y = (h * beatHeight) + 5f;
+
+                rt.anchoredPosition = new Vector2(x, y);
+                rt.sizeDelta = new Vector2((lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x - lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x) * 0.85f, 20f);
+
+                // NoteMover 컴포넌트 추가 후 Init 호출
+                var mover = noteInstance.AddComponent<NoteMover>();
+                mover.Init(y, speedY, this);  // 현재 PlayController 인스턴스를 전달
+
+                // 생성된 노트 저장
+                if (Managers.Chart.Notes.Count <= v)
+                {
+                    Managers.Chart.Notes.Add(new Dictionary<int, GameObject>());
+                }
+                Managers.Chart.Notes[v][h] = noteInstance;
+            }
+        }
+        #endregion
+
+        #region DownFlickNoteRender
+        for (int v = 0; v < Managers.Chart.DownFlickNotes.Count; v++)
+        {
+            foreach (int h in Managers.Chart.DownFlickNotes[v])
+            {
+                // 노트 프리팹 로드 및 생성
+                GameObject notePrefab = Resources.Load<GameObject>("Prefabs/Notes/DownFlickNote");
+                if (notePrefab == null)
+                {
+                    Debug.LogError("노트 프리팹을 찾을 수 없습니다: Prefabs/Notes/DownFlickNote");
+                    continue;
+                }
+
+                GameObject noteInstance = Instantiate(notePrefab, GameObject.Find("RootCanvas").transform);
+
+                // RectTransform 설정
+                RectTransform rt = noteInstance.GetComponent<RectTransform>();
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.anchorMin = new Vector2(0.5f, 0f);
+                rt.anchorMax = new Vector2(0.5f, 0f);
+                float totalWidth = Screen.width;
+                float x = (lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x + lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x) / 2;
+                float y = (h * beatHeight) + 5f;
+
+                rt.anchoredPosition = new Vector2(x, y);
+                rt.sizeDelta = new Vector2((lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x - lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x) * 0.85f, 20f);
+
+                // NoteMover 컴포넌트 추가 후 Init 호출
+                var mover = noteInstance.AddComponent<NoteMover>();
+                mover.Init(y, speedY, this);  // 현재 PlayController 인스턴스를 전달
+
+                // 생성된 노트 저장
+                if (Managers.Chart.Notes.Count <= v)
+                {
+                    Managers.Chart.Notes.Add(new Dictionary<int, GameObject>());
+                }
+                Managers.Chart.Notes[v][h] = noteInstance;
+            }
+        }
+        #endregion
+
     }
 
     /// <summary>
@@ -119,28 +248,21 @@ public class PlayController : MonoBehaviour
     /// </summary>
     public void BeginPlay()
     {
-        Debug.Log($"BeginPlay on “{gameObject.name}” ID={GetInstanceID()}");
-
         // 플레이 시작 시간 기록 및 상태 설정
         playStartTime = Time.time;
         startTime = Time.time;
         isPlaying = true;
-        Debug.Log($"[BeginPlay] 상태 설정 완료 - Controller Instance ID: {gameObject.GetInstanceID()}, isPlaying: {isPlaying}, playStartTime: {playStartTime}");
 
         // 채보 데이터 로드 및 렌더링
         string path = Path.Combine(Application.persistentDataPath, "chart.json");
         Managers.Chart.LoadChartFromJson(path);
-        Debug.Log($"[BeginPlay] 채보 데이터 로드 완료 - Controller Instance ID: {gameObject.GetInstanceID()}");
         
         PlayModeRenderNotes(); // 노트 렌더링 방식 변경
-        Debug.Log($"[BeginPlay] 노트 렌더링 완료 - Controller Instance ID: {gameObject.GetInstanceID()}");
-
         // 라인 렌더러 플레이 시작 알림
         PlayModeLineRender lineRender = GameObject.Find("PlayModeLineRender").GetComponent<PlayModeLineRender>();
         if (lineRender != null)
         {
             lineRender.OnPlayStart();
-            Debug.Log($"[BeginPlay] 라인 렌더러 시작 - Controller Instance ID: {gameObject.GetInstanceID()}");
         }
 
         // BGM 재생 설정
@@ -154,7 +276,6 @@ public class PlayController : MonoBehaviour
             AudioController.Instance.PlayBGM(bgmClip);
         }
         
-        Debug.Log($"[BeginPlay] 종료 - Controller Instance ID: {gameObject.GetInstanceID()}, isPlaying: {isPlaying}, playStartTime: {playStartTime}");
     }
 
     /// <summary>

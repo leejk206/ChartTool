@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class PlayModeLineRender : MonoBehaviour
 {
     [SerializeField] private PlayController playController;
-    float lineSpacing = 400f;                 // 라인 간격 (16비트 단위, 400 * 16 = 6400px)
+    float lineSpacing = 200f;                 // 라인 간격 (16비트 단위, 한 박자당 라인 하나일 경우 400px, 반 박자당 라인 하나일 경우 200px)
     public int visibleLinesCount = 4;                 // 화면에 표시될 라인 수
     
     private GameObject horizontalLinePrefab;          // 라인 프리팹
@@ -25,6 +25,8 @@ public class PlayModeLineRender : MonoBehaviour
     RectTransform canvasRect;
     List<RectTransform> lineRTs = new List<RectTransform>();
     PlayController pc;
+
+    public List<GameObject> verticalLines;
 
     void Awake()
     {
@@ -81,6 +83,29 @@ public class PlayModeLineRender : MonoBehaviour
         InitializeLinePool();
         ResetLines();
         isPlaying = false; // 시작 시 isPlaying을 false로 설정
+
+        verticalLines = new();
+
+        float totalWidth = (GameObject.Find("RootCanvas").GetComponent<RectTransform>().rect.width) * 0.92f;
+        GameObject verticalLinePrefab = Resources.Load<GameObject>("Prefabs/Line/VerticalLine"); // 세로선
+
+        // 세로선 생성
+        for (int i = 0; i < 8; i++)
+        {
+            float x = -(totalWidth / 2f) + (totalWidth / (8 - 1)) * i;
+            GameObject vLine = Instantiate(verticalLinePrefab, canvas.transform);
+            RectTransform vrt = vLine.GetComponent<RectTransform>();
+
+            // 피봇과 앵커를 아래 기준으로 설정
+            vrt.pivot = new Vector2(0.5f, 0f);               // 피봇 설정
+            vrt.anchorMin = new Vector2(0.5f, 0f);           // Content 피봇
+            vrt.anchorMax = new Vector2(0.5f, 0f);
+
+            vrt.anchoredPosition = new Vector2(x, 0);        // Content에서 피봇까지 거리
+            vrt.sizeDelta = new Vector2(vrt.sizeDelta.x, 5000f); // 세로선 길이 설정
+
+            verticalLines.Add(vLine);
+        }
     }
 
     void ResetLines()
