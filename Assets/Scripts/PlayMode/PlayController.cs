@@ -10,6 +10,8 @@ public class PlayController : MonoBehaviour
 {
     [Header("BPM 설정")]
     public float BPM = 120f;                    // 곡의 BPM 값
+    [Header("박자당 생성할 라인 갯수(1박자에 1개면 1로 설정, 1/2박자에 1개면 2로 설정 등")]
+    public int lineForBeat = -1;
     [HideInInspector]
     public float beatHeight = 25f;              // 한 박자가 차지하는 세로 픽셀 크기
     [Header("노트 JSON 파일 이름")]
@@ -73,6 +75,7 @@ public class PlayController : MonoBehaviour
         float speedY = (beatHeight * 16f) / secondsPerBeat; // 16은 한 마디의 16비트를 의미
                                                             //float centerY = 800f; // 화면 중앙 Y 위치
 
+        #region NoteRender
         #region NormalNoteRender
         for (int v = 0; v < Managers.Chart.NormalNotes.Count; v++)
         {
@@ -95,7 +98,7 @@ public class PlayController : MonoBehaviour
                 rt.anchorMax = new Vector2(0.5f, 0f); 
                 float totalWidth = Screen.width;
                 float x = (lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x + lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x) / 2;
-                float y = (h * beatHeight) + 5f;
+                float y = (h * beatHeight);
 
                 rt.anchoredPosition = new Vector2(x, y);
                 rt.sizeDelta = new Vector2((lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x - lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x) * 0.85f, 20f);
@@ -140,7 +143,7 @@ public class PlayController : MonoBehaviour
                 rt.anchorMax = new Vector2(0.5f, 0f);
                 float totalWidth = Screen.width;
                 float x = (lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x + lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x) / 2;
-                float y = (h * beatHeight) + 5f;
+                float y = (h * beatHeight);
 
                 rt.anchoredPosition = new Vector2(x, y);
                 rt.sizeDelta = new Vector2((lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x - lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x) * 0.85f, 20f);
@@ -181,7 +184,7 @@ public class PlayController : MonoBehaviour
                 rt.anchorMax = new Vector2(0.5f, 0f);
                 float totalWidth = Screen.width;
                 float x = (lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x + lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x) / 2;
-                float y = (h * beatHeight) + 5f;
+                float y = (h * beatHeight);
 
                 rt.anchoredPosition = new Vector2(x, y);
                 rt.sizeDelta = new Vector2((lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x - lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x) * 0.85f, 20f);
@@ -222,7 +225,7 @@ public class PlayController : MonoBehaviour
                 rt.anchorMax = new Vector2(0.5f, 0f);
                 float totalWidth = Screen.width;
                 float x = (lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x + lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x) / 2;
-                float y = (h * beatHeight) + 5f;
+                float y = (h * beatHeight);
 
                 rt.anchoredPosition = new Vector2(x, y);
                 rt.sizeDelta = new Vector2((lineRender.verticalLines[v + 1].GetComponent<RectTransform>().anchoredPosition.x - lineRender.verticalLines[v].GetComponent<RectTransform>().anchoredPosition.x) * 0.85f, 20f);
@@ -240,7 +243,7 @@ public class PlayController : MonoBehaviour
             }
         }
         #endregion
-
+        #endregion
     }
 
     /// <summary>

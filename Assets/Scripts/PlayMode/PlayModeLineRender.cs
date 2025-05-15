@@ -112,11 +112,16 @@ public class PlayModeLineRender : MonoBehaviour
     {
         if (horizontalLinePool == null) return;
 
+        if (playController.lineForBeat != -1 && playController.lineForBeat != 0)
+        {
+            lineSpacing = (16 / playController.lineForBeat) * 25f;
+        }
+
         lineInitialYPositions.Clear();
         // 모든 라인을 초기 위치로 재배치
         for (int i = 0; i < horizontalLinePool.Count; i++)
         {
-            float yPos = screenHeight + (i * lineSpacing);
+            float yPos = (i * lineSpacing);
             PositionLine(horizontalLinePool[i], yPos);
             lineInitialYPositions.Add(yPos);
         }

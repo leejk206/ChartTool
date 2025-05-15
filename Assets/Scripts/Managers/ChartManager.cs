@@ -141,7 +141,7 @@ public class ChartManager
         lineRender = GameObject.Find("LineRender").GetComponent<LineRender>();
         contentRect = GameObject.Find("Content").GetComponent<RectTransform>();
 
-        // 모든 노트 데이터를 순회하며 노트 생성
+        // NormalNote 생성
         for (int vIndex = 0; vIndex < Managers.Chart.NormalNotes.Count; vIndex++)
         {
             foreach (int hIndex in Managers.Chart.NormalNotes[vIndex])
@@ -152,7 +152,7 @@ public class ChartManager
                     : lineRender.verticalXs[vIndex];
 
                 // 노트의 Y 좌표 계산
-                float centerY = hIndex * 25f + 12.5f;
+                float centerY = hIndex * 25f;
 
                 // 노트 프리팹 생성 및 설정
                 GameObject NotePrefab = Resources.Load<GameObject>("Prefabs/Notes/NormalNote");
@@ -164,7 +164,97 @@ public class ChartManager
                 rt.anchorMin = new Vector2(0.5f, 0f);
                 rt.anchorMax = new Vector2(0.5f, 0f);
                 rt.anchoredPosition = new Vector2(centerX, centerY);
-                rt.sizeDelta = new Vector2(lineRender.verticalXs[1] - lineRender.verticalXs[0], 25f);
+                rt.sizeDelta = new Vector2(lineRender.verticalXs[1] - lineRender.verticalXs[0], 15f);
+
+                // 생성된 노트 참조 저장
+                Managers.Chart.Notes[vIndex][hIndex] = noteInstance;
+            }
+        }
+
+        // SlideNote 생성
+        for (int vIndex = 0; vIndex < Managers.Chart.SlideNotes.Count; vIndex++)
+        {
+            foreach (int hIndex in Managers.Chart.SlideNotes[vIndex])
+            {
+                // 노트의 X 좌표 계산 (두 세로선 사이의 중앙)
+                float centerX = lineRender.verticalXs.Count > vIndex + 1
+                    ? (lineRender.verticalXs[vIndex] + lineRender.verticalXs[vIndex + 1]) / 2f
+                    : lineRender.verticalXs[vIndex];
+
+                // 노트의 Y 좌표 계산
+                float centerY = hIndex * 25f;
+
+                // 노트 프리팹 생성 및 설정
+                GameObject NotePrefab = Resources.Load<GameObject>("Prefabs/Notes/SlideNote");
+                GameObject noteInstance = GameObject.Instantiate(NotePrefab, contentRect);
+
+                // RectTransform 설정
+                RectTransform rt = noteInstance.GetComponent<RectTransform>();
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.anchorMin = new Vector2(0.5f, 0f);
+                rt.anchorMax = new Vector2(0.5f, 0f);
+                rt.anchoredPosition = new Vector2(centerX, centerY);
+                rt.sizeDelta = new Vector2(lineRender.verticalXs[1] - lineRender.verticalXs[0], 15f);
+
+                // 생성된 노트 참조 저장
+                Managers.Chart.Notes[vIndex][hIndex] = noteInstance;
+            }
+        }
+
+        // UpFlickNote 생성
+        for (int vIndex = 0; vIndex < Managers.Chart.UpFlickNotes.Count; vIndex++)
+        {
+            foreach (int hIndex in Managers.Chart.UpFlickNotes[vIndex])
+            {
+                // 노트의 X 좌표 계산 (두 세로선 사이의 중앙)
+                float centerX = lineRender.verticalXs.Count > vIndex + 1
+                    ? (lineRender.verticalXs[vIndex] + lineRender.verticalXs[vIndex + 1]) / 2f
+                    : lineRender.verticalXs[vIndex];
+
+                // 노트의 Y 좌표 계산
+                float centerY = hIndex * 25f;
+
+                // 노트 프리팹 생성 및 설정
+                GameObject NotePrefab = Resources.Load<GameObject>("Prefabs/Notes/UpFlickNote");
+                GameObject noteInstance = GameObject.Instantiate(NotePrefab, contentRect);
+
+                // RectTransform 설정
+                RectTransform rt = noteInstance.GetComponent<RectTransform>();
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.anchorMin = new Vector2(0.5f, 0f);
+                rt.anchorMax = new Vector2(0.5f, 0f);
+                rt.anchoredPosition = new Vector2(centerX, centerY);
+                rt.sizeDelta = new Vector2(lineRender.verticalXs[1] - lineRender.verticalXs[0], 15f);
+
+                // 생성된 노트 참조 저장
+                Managers.Chart.Notes[vIndex][hIndex] = noteInstance;
+            }
+        }
+
+        // DownFlickNote 생성
+        for (int vIndex = 0; vIndex < Managers.Chart.DownFlickNotes.Count; vIndex++)
+        {
+            foreach (int hIndex in Managers.Chart.DownFlickNotes[vIndex])
+            {
+                // 노트의 X 좌표 계산 (두 세로선 사이의 중앙)
+                float centerX = lineRender.verticalXs.Count > vIndex + 1
+                    ? (lineRender.verticalXs[vIndex] + lineRender.verticalXs[vIndex + 1]) / 2f
+                    : lineRender.verticalXs[vIndex];
+
+                // 노트의 Y 좌표 계산
+                float centerY = hIndex * 25f;
+
+                // 노트 프리팹 생성 및 설정
+                GameObject NotePrefab = Resources.Load<GameObject>("Prefabs/Notes/DownFlickNote");
+                GameObject noteInstance = GameObject.Instantiate(NotePrefab, contentRect);
+
+                // RectTransform 설정
+                RectTransform rt = noteInstance.GetComponent<RectTransform>();
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                rt.anchorMin = new Vector2(0.5f, 0f);
+                rt.anchorMax = new Vector2(0.5f, 0f);
+                rt.anchoredPosition = new Vector2(centerX, centerY);
+                rt.sizeDelta = new Vector2(lineRender.verticalXs[1] - lineRender.verticalXs[0], 15f);
 
                 // 생성된 노트 참조 저장
                 Managers.Chart.Notes[vIndex][hIndex] = noteInstance;

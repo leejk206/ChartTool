@@ -27,23 +27,23 @@ public class NoteEditor : MonoBehaviour
 
         _keypadKeyAction = () =>
         {
-            if (Input.GetKeyDown(KeyCode.Keypad1))
+            if (Input.GetKeyDown(KeyCode.Keypad1) || Input.GetKeyDown(KeyCode.Alpha1))
             {
                 AddNormalNote();
             }
-            else if (Input.GetKeyDown(KeyCode.Keypad2))
+            else if (Input.GetKeyDown(KeyCode.Keypad2) || Input.GetKeyDown(KeyCode.Alpha2))
             {
                 AddHoldNote();
             }
-            else if (Input.GetKeyDown(KeyCode.Keypad3))
+            else if (Input.GetKeyDown(KeyCode.Keypad3) || Input.GetKeyDown(KeyCode.Alpha3))
             {
                 AddSlideNote();
             }
-            else if (Input.GetKeyDown(KeyCode.Keypad4))
+            else if (Input.GetKeyDown(KeyCode.Keypad4) || Input.GetKeyDown(KeyCode.Alpha4))
             {
                 AddUpFlickNote();
             }
-            else if (Input.GetKeyDown(KeyCode.Keypad5))
+            else if (Input.GetKeyDown(KeyCode.Keypad5) || Input.GetKeyDown(KeyCode.Alpha5))
             {
                 AddDownFlickNote();
             }
